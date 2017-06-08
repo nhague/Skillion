@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="offset-body">
+<head>
+  <meta charset="UTF-8">
+  <title>Payments</title>
+  <link rel="stylesheet" type="text/css" href="https://getuikit.com/assets/uikit/dist/css/uikit.css?nc=2473"></script>
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+  <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit.js?nc=2473"></script>
+  <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit-icons.js?nc=2473"></script>
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+</head>
+<body>
+    <div class="content" uk-height-viewport="offset-bottom: 6">
+    <nav class="uk-navbar" style="background: #EEEEEE">
+        <div class="uk-navbar-flip">
+            <ul class="uk-navbar-nav">
+                <li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+                <li><a href="/profile">Back to Dashboard</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                {% if user %}
+                <li><a href="/profile/edit">{{user['name']}}</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="table-holder">
+        {% if error %}
+        <div class="uk-alert-danger" uk-alert>
+            <a class="uk-alert-close" uk-close></a>
+            <h3 style="font-size: 35px;"><span uk-icon="icon: warning; ratio: 2.5" style="margin-right: 20px; position: relative; top: -3px;"></span>Oops! {{error}}</h3>
+        </div>
+        {% endif %}
+        {% if success %}
+        <div class="uk-alert-success" uk-alert>
+            <a class="uk-alert-close" uk-close></a>
+            <h3 style="font-size: 35px;"><span uk-icon="icon: happy; ratio: 2.5" style="margin-right: 20px; position: relative; top: -3px;"></span>Sweet! Your purchase has been made successfully!</h3>
+        </div>
+        {% endif %}
+        <div class="uk-card uk-card-default uk-card-body">
+            <div style="float: right;">
+                <a href="/profile" uk-icon="icon: close"></a>
+            </div>
+            <h3 class="uk-card-title" style="margin: 0px; font-weight: 600;">All Your Payments</h3>
+            <table class="uk-table uk-table-hover">
+                <thead style="border-top: 1px #DDD solid; border-bottom: 1px #DDD solid;">
+                    <tr>
+                        <th>Date</th>
+                        <th>Seller</th>
+                        <th>Transaction #</th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr class="purchaseInfo" data-number="{{loop.index}}">
+                        <td>{{payment.payment_date}}</td>
+                        <td>{{payment.seller_name}}</td>
+                        <td>{{payment.payment_ident}}</td>
+                        <td>{{payment.ccy}} {{payment.amount_total}}</td>
+                        <td><button class="uk-button uk-button-primary uk-button-small">See More</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+   </div>
+
+
+   {% for payment in payments %}
+   <div id="purchaseInfobox{{loop.index}}" class="modal" data-number="{{loop.index}}">
+
+     <!-- Modal content -->
+     <div class="modal-content" style="max-width: 550px;">
+       <span class="close" data-number="{{loop.index}}">&times;</span>
+       <div class="info-details">
+           <table class="uk-table uk-table-hover">
+                <h1 class="uk-title" style="font-size: 28px; font-weight: 700;">More Information</h1>
+               <tbody>
+                   <tr>
+                       <td><strong>Seller</strong></td>
+                       <td>{{payment.seller_name}}</td>
+                   </tr>
+                   <tr>
+                       <td><strong>Payment Date</strong></td>
+                       <td>{{payment.payment_date}}</td>
+                   </tr>
+                   <tr>
+                       <td>
+                           <strong>Payment Reference Number</strong>
+                       </td>
+                       <td>
+                           {{payment.payment_ident}}
+                       </td>
+                   </tr>
+                   <tr style="border-bottom: 2px #000 solid; border-top: 2px #000 solid; background: #FCFCFC; margin-top: 30px;">
+                       <td>
+                           <strong><h5 style="padding: 0px; margin: 0px; text-transform: uppercase; font-weight: 600;">Amount Paid</h5></strong>
+                       </td>
+                       <td style="color: #008D14;">
+                           {{payment.ccy}} {{payment.amount_total}}
+                       </td>
+                   </tr>
+                   <tr>
+                       <td>
+                           <strong>Payment Method</strong>
+                       </td>
+                       {% if payment.payment_method == "ZipMoney" %}
+                       <td>
+                            <a href="https://my.zipmoney.com.au/#/signIn" target="_blank">{{payment.payment_method}} Payment</a>
+                       </td>
+                       {% else %}
+                       <td>
+                            {{payment.payment_method}} Payment
+                       </td>
+                       {% endif %}
+                   </tr>
+                   {% if payment.payment_method != "Stripe" %}
+                   <tr>
+                       <td>
+                           <strong>{{payment.payment_method}} Payment Reference Number</strong>
+                       </td>
+                       <td>
+                            {{payment.payment_method_info}}
+                       </td>
+                   </tr>
+                   {% endif %}
+               </tbody>
+           </table>
+       </div>
+     </div>
+
+   </div>
+   {% endfor %}
+</div>
+<footer class="footer">
+    <div class="uk-clearfix">
+      <div class="uk-float-right">
+          <ul class="uk-breadcrumb" style="margin-bottom: 0px;">
+            <li><a href="https://skillion.com.au/">Website</a></li>
+            <li><a href="/tos">Terms of Service</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="uk-float-left">
+          Skillion Inc.
+      </div>
+  </div>
+</footer>
+</body>
+<script>
+// When the user clicks on the button, open the modal
+$('.purchaseInfo').on('click', function(){
+    var num = $(this).attr('data-number');
+    // Get the modal
+    var name = "purchaseInfobox" + String(num)
+    var modal = document.getElementById(name);
+    modal.style.display = "block";
+});
+
+// When the user clicks on <span> (x), close the modal
+
+$('.close').on('click', function(){
+    var num = $(this).attr('data-number');
+    var name = "purchaseInfobox" + String(num)
+    var modal = document.getElementById(name);
+    modal.style.display = "none";
+});
+</script>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html class="offset-body">
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/css/uikit.min.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/rangeslider.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/ui.min.js"></script>
+    <script type="text/javascript" src="/static/js/json2.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+    <script type="text/javascript" src="https://account.zipmoney.com.au/scripts/iframe/zipmoney-checkout.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+    <title>Pay using Zip Payments</title>
+</head>
+<body id="orderID" data-oi="">
+   <div class="content" uk-height-viewport="offset-bottom: 6">
+    <div id="cover"></div>
+    <nav class="uk-navbar">
+        <div class="uk-navbar-flip">
+            <ul class="uk-navbar-nav">
+                <li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+                <li><a href="/profile">Profile</a></li>
+				<li><a href="/purchases">My Skillions</a></li>
+				<li><a href="/payments">My Payments</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="frame-holder">
+        <iframe id="theFrame" src="/zipstdby" frameborder="0"></iframe>
+    </div>
+</body>
+
+</div>
+<footer class="footer">
+	<div class="uk-clearfix">
+	  <div class="uk-float-right">
+		  <ul class="uk-breadcrumb" style="margin-bottom: 0px; position: relative; left: -50px;">
+			<li><a href="https://skillion.com.au/">Website</a></li>
+			<li><a href="/information">ZipMoney Terms & Conditions</a></li>
+			<li><a href="/privacy">Privacy Policy</a></li>
+		</ul>
+	  </div>
+	  <div class="uk-float-left">
+		  Skillion Inc.
+	  </div>
+  </div>
+</footer>
+<script>
+var all_info = {"Line_Items" : Cookies.getJSON()};
+
+$(document).ready(function(){
+    data = {
+            'product_token': "{{product_token}}",
+            'is_fully_paid' : all_info["Line_Items"]["PurchaseDetails"]["is_fully_paid"],
+            'token': "{{token}}",
+            'amount_total': all_info["Line_Items"]["PurchaseDetails"]["amount_total"],
+            'payment_for': all_info["Line_Items"]["PurchaseDetails"]["amount_paid"],
+            'currency': all_info["Line_Items"]["PurchaseDetails"]["amount_currency"],
+            'name': all_info["Line_Items"]["PurchaseDetails"]["description"],
+            'due_date': all_info["Line_Items"]["PurchaseDetails"]["date_due"],
+            'no_bikes': all_info["Line_Items"]["PurchaseDetails"]["purchase_qty"],
+            'is_layby': 'no'
+        }
+    $.post('/zip',data,function(response,status){
+        var order_lines = { "order_line": []};
+        var order_id = String(response);
+        for (i = 0; i < parseInt(all_info['Line_Items']['PurchaseDetails']['purchase_qty']); i++) {
+            order_lines["order_line"][i] = {
+                  "product_id": "{{product_token}}",
+                  "amount_total": parseInt(all_info['Line_Items']['PurchaseDetails']['amount_total'])/(parseInt(all_info['Line_Items']['PurchaseDetails']['purchase_qty'])),
+                  "amount_remaining": parseInt(all_info['Line_Items']['PurchaseDetails']['amount_total'])/(parseInt(all_info['Line_Items']['PurchaseDetails']['purchase_qty'])),
+                  "amount_postage":0,
+                  "amount_paid": 0,
+                  "amount_currency": all_info['Line_Items']['PurchaseDetails']['amount_currency'],
+                  "is_pickup": true,
+                  "is_fully_paid": false,
+                  "is_postage_paid": false,
+                  "description": all_info['Line_Items']['PurchaseDetails']['description'],
+                  "deliver_to_address": "PICKUP" }
+            }
+        order_lines['order_id'] = order_id;
+        sendLineItems(JSON.stringify(order_lines));
+        });
+    });
+
+var sendLineItems = function(str_obj){
+    $.post('/orderlines', {'key': str_obj}, function(resp, stat){
+        $("#orderID").attr("data-oi", JSON.parse(resp)['order']['id'])
+        zipPaymentHandler();
+        $('#cover').fadeOut(1000);
+    })
+}
+function zipPaymentHandler() {
+	var all_info = {"Line_Items" : Cookies.getJSON()};
+	data = {}
+	data['charge'] = "true";
+	data['checkout_source'] = "null";
+	data["currency_code"] = all_info["Line_Items"]["PurchaseDetails"]['amount_currency'];
+	data['consumer'] = {};
+	data['consumer']['gender'] = "1";
+	data['consumer']['dob'] = "{{user['dob_zipmoney']}}";
+	data['consumer']['email'] = "{{user['email']}}";
+	data['consumer']['first_name'] = "{{user['name_first']}}";
+	data['consumer']['last_name'] = "{{user['name_last']}}";
+	data['consumer']['phone'] = "{{user['mobile_phone_number']}}";
+	data['consumer']['title'] = "Mr";
+
+	data['shipping_address'] = {};
+	data['shipping_address']['first_name'] = "{{user['name_first']}}";
+	data['shipping_address']['last_name'] = "{{user['name_last']}}";
+	data['shipping_address']['line1'] = "{{user['address'][0]['address_line1']}}";
+	data['shipping_address']['line2'] = "{{user['address'][0]['address_line2']}}";
+	data['shipping_address']['country'] = "{{user['address'][0]['address_country_name']}}";
+	data['shipping_address']['zip'] = "{{user['address'][0]['address_postcode']}}";
+	data['shipping_address']['city'] = "{{user['address'][0]['address_city']}}";
+	data['shipping_address']['state'] = "{{user['address'][0]['address_region']}}";
+
+	data['billing_address'] = data['shipping_address'];
+
+	data['cancel_url'] = "http://shop.skillion.com.au/callback/zip/cancel";
+	data['success_url'] = "http://shop.skillion.com.au/callback/zip/success";
+	data['cart_url'] = "http://shop.skillion.com.au/";
+	data['refer_url'] = "http://shop.skillion.com.au/callback/zip/refer";
+	data['error_url'] = "http://shop.skillion.com.au/callback/zip/decline";
+	data['decline_url'] = "http://shop.skillion.com.au/callback/zip/cancel";
+
+	data['order_id'] = String($('#orderID').attr("data-oi"));
+	data['txn_id'] = String($('#orderID').attr("data-oi"));
+
+	data['order'] = {};
+	data['order']['id'] = String($('#orderID').attr("data-oi"));
+	data['order']['tax'] = 0;
+	data['order']['shipping_value'] = 0;
+	data['order']['total'] = all_info["Line_Items"]["PurchaseDetails"]['amount_remaining'];
+	data['order']['detail'] = [];
+	data['order']['detail'][0] = {}
+	data['order']['detail'][0]['quantity'] = all_info["Line_Items"]["PurchaseDetails"]['purchase_qty'];
+	data['order']['detail'][0]['name'] = all_info["Line_Items"]["PurchaseDetails"]['description'];
+	data['order']['detail'][0]['price'] = parseInt(all_info['Line_Items']['PurchaseDetails']['amount_total'])/parseInt(all_info["Line_Items"]["PurchaseDetails"]['purchase_qty']);
+	data['order']['detail'][0]['id'] = String($('#orderID').attr("data-oi"));
+    data['order']['detail'][0]['id'] = String($('#orderID').attr("data-oi"));
+	data['order']['detail'][0]['image_url'] = "https://www.fulfilleddesires.net/uploads/skilz/images/17778938_183163325526430_2010877634_o.jpg";
+
+	data['merchant_id'] = "3033";
+	data['merchant_key'] = "YKwZWzacF9AOMfvslXeyMYq8/EBSj9FrpsPqpp4J8ZE=";
+	$.post('/zip/setup', {'key': JSON.stringify(data)}, function(response, status){
+		$('#theFrame').attr('src', response)
+	});
+}</script>
+</html>

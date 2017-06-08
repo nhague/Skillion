@@ -1,0 +1,320 @@
+<html class="offset-body">
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/css/uikit.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/rangeslider.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit.js?nc=2473"></script>
+    <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit-icons.js?nc=2473"></script>
+    <script type="text/javascript" src="/static/js/rangeslider.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+    <title>Delivery</title>
+</head>
+<body>
+    <div class="content" uk-height-viewport="offset-bottom: 6">
+    <nav class="uk-navbar">
+        <div class="uk-navbar-flip">
+            <ul class="uk-navbar-nav">
+                <li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+                <li><a href="/profile">Profile</a></li>
+				<li><a href="/purchases">My Skillions</a></li>
+				<li><a href="/payments">My Payments</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                <li>
+                    <a class="uk-button uk-button-primary nav_button" id="payfororder">Pay for order</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="box-holder-address">
+        <div uk-alert>
+            <a class="uk-alert-close" uk-close></a>
+            <h3>Information</h3>
+            <p>Financed bikes are subject to <a href="/zip/information">third-party terms and conditions</a>. Please <a href="/zip/information">read all finance-related terms</a> carefully before proceeding.</p>
+        </div>
+		<div class="uk-card uk-card-default uk-card-body">
+        <div class="form" style="display: none;">
+            <form class="uk-form-horizontal uk-margin-large" style="margin-bottom: 0px;">
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-text">Given Name</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input alpha-only" id="givenname" value = "{{user['name_first']}}" type="text" placeholder="Enter your given name..." disabled>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-text">Surname</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input alpha-only" id="surname" value="{{user['name_last']}}" type="text" placeholder="Enter your surname..." disabled>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-text">Email Address</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="email" type="text" value="{{user['email']}}" placeholder="Enter your email address..." disabled>
+                    </div>
+                </div>
+                <hr class="uk-divider-icon" style="padding-top: 80px;">
+            </form>
+        </div>
+        <table class="uk-table uk-table-hover" style="margin-top: 0px; border-top: 1px #DDD solid">
+            <thead style="border-bottom: 1px #DDD solid">
+                <tr>
+                    <th>Name</th>
+                    <th>Cost ({{transaction['currency']}})</th>
+                    <th style="display: none;">Cost ({{transaction['currency']}})</th>
+                    <th>Delivery Address</th>
+                    <th>Delivery Type</th>
+                </tr>
+            </thead>
+            <tbody class="tbody_info">
+                {% for item in range(transaction['no_bikes']|int) %}
+                <tr>
+                    <td style="font-size: 16px;">{{transaction['name']}}</td>
+                    <td class="sub_total">{{transaction['cost_per_item']}}</td>
+                    <td style="display: none;" class="sub_paid">{{transaction['cost_per_item']}}</td>
+                    <td><button class="uk-button uk-button-primary uk-button-small address_btn" style="color: #FFF; background: #2ecc71;" id="addAddress_btn" data-mn="{{loop.index}}" data-holder>Set Delivery Address</button></td>
+                    <td id="{{loop.index}}_postal">--</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+  {% for item in range(transaction['no_bikes']|int) %}
+  <div id="addressModal{{loop.index}}" class="modal">
+  <div class="modal-content" style="width: 500px;">
+    <span class="close close_btn">&times;</span>
+    <form class="uk-form-horizontal">
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title">Address Details for {{transaction['name']}}</h2>
+        </div>
+    <div class="uk-margin">
+        <label class="uk-form-label" for="form-horizontal-text">Line One</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" id="{{loop.index}}address1" type="text" placeholder="Address Line One...">
+        </div>
+    </div>
+    <div class="uk-margin">
+        <label class="uk-form-label" for="form-horizontal-text">Line Two</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" id="{{loop.index}}address2" type="text" placeholder="Address Line Two...">
+        </div>
+    </div>
+    <div class="uk-margin">
+        <label class="uk-form-label" for="form-horizontal-text">Name of City</label>
+        <div class="uk-form-controls">
+            <input class="uk-input alpha-only" id="{{loop.index}}city" type="text" placeholder="City/Town...">
+        </div>
+    </div>
+    <div class="uk-margin">
+        <label class="uk-form-label" for="form-horizontal-text">State</label>
+        <div class="uk-form-controls">
+            <input class="uk-input alpha-only" id="{{loop.index}}state" type="text" placeholder="State...">
+        </div>
+    </div>
+    <div class="uk-margin">
+        <label class="uk-form-label" for="form-horizontal-text">Postal Code</label>
+        <div class="uk-form-controls">
+            <input class="uk-input num-only" id="{{loop.index}}postcode" type="text" placeholder="Postal Code...">
+        </div>
+    </div>
+    <div class="uk-margin">
+        <label class="uk-form-label" for="form-horizontal-text">Country</label>
+        <div class="uk-form-controls">
+            <input class="uk-input alpha-only" type="text" id="{{loop.index}}country" placeholder="Country...">
+        </div>
+    </div>
+    </form>
+    <button class="uk-button uk-width-1-1 uk-button-large save-address" style="color:#FFF; background: #2ecc71" data-mn="{{loop.index}}">Save Address</button>
+  </div>
+  </div>
+  {% endfor %}
+
+<script>
+$(".address_btn").click(function(){
+    modal_number = $(this).data('mn')
+    modal = 'addressModal' + String(modal_number)
+    var modal_a = document.getElementById(modal);
+    $(modal_a).css('display', 'block');
+});
+
+$('.close_btn').click(function(){
+    $(this).parent().parent().css('display', 'none');
+});
+
+$(document).ready(function(){
+    for (i = 1; i <= parseInt({{transaction['no_bikes']|int}}); i++) {
+        if(isEmpty(i) == false){
+            postal_field = "#" + String(i) + "_postal";
+            $(postal_field).text("PICKUP");
+            $(postal_field).parent().find('.address_btn').text("Edit Address");
+            $(postal_field).parent().find('.address_btn').removeClass('uk-button-primary').addClass('uk-button-secondary');
+        }
+    }
+});
+
+var isEmpty = function(formNumber){
+    modal = '#addressModal' + String(formNumber)
+    var fields = ["address1", "city", "state", "postcode", "country"];
+    var numberFilled = 0;
+    for (var i = 0; i < fields.length; i++) {
+        var element = "#" + String(formNumber) + fields[i]
+        if($(element).val().length != 0){
+            numberFilled++;
+        }
+    }
+    if(numberFilled == fields.length){
+        return false;
+    } else {
+        return true;
+    }
+}
+
+$('.save-address').click(function(){
+    item_number = $(this).data('mn')
+    address1_item = "#" + String(item_number) + "address1"
+    address2_item = "#" + String(item_number) + "address2"
+    city_item = "#" + String(item_number) + "city"
+    state_item = "#" + String(item_number) + "state"
+    postcode_item = "#" + String(item_number) + "postcode"
+    country_item = "#" + String(item_number) + "country"
+    data = {
+            'is_pp': false,
+            'address1' : $(address1_item).val(),
+            'address2': $(address2_item).val(),
+            'city': $(city_item).val(),
+            'state': $(state_item).val(),
+            'postcode': $(postcode_item).val(),
+            'country': $(country_item).val(),
+            'is_fully_paid': false,
+            'amount_paid': 0,
+            'amount_remaining': {{transaction['cost_per_item']|int}},
+            'amount_total': {{transaction['cost_per_item']|int}},
+            'amount_currency': "{{transaction['currency']}}",
+            'is_pickup': true,
+            'description': "{{transaction['name']}}"
+        }
+    $.post('/zip/delivery/{{token}}',data,function(response,status){
+        cost = "PICKUP";
+        postal_field = "#" + String(item_number) + "_postal"
+        $(postal_field).text(cost)
+        modal = '#addressModal' + String(item_number)
+        $(modal).css('display', 'none');
+        $(postal_field).parent().find('.address_btn').text("Edit Address")
+        $(postal_field).parent().find('.address_btn').removeClass('uk-button-primary').addClass('uk-button-secondary')
+        $(postal_field).parent().find('.address_btn').attr("data-holder", data);
+    })
+});
+
+$('#payfororder').click(function(){
+    if($('#givenname').val().length >= 1 && $('#surname').val().length >= 1 && $('#email').val().length >= 1){
+        var numberEmpty = 0;
+        for (i = 1; i <= parseInt({{transaction['no_bikes']|int}}); i++) {
+            if(isEmpty(i) == true){
+                numberEmpty++;
+            }
+        }
+        if(numberEmpty == 0){
+            payBC();
+        } else {
+            UIkit.modal.alert('Please fill the delivery details').then(function() {
+                console.log('Alert closed.')
+            });
+        }
+    } else{
+        UIkit.modal.alert('Please fill the email and name details').then(function() {
+            console.log('Alert closed.')
+        });
+    }
+});
+
+var payBC = function(){
+    var amount_total = 0;
+    $('.sub_total').each(function(i, obj){
+        amount_total = amount_total + parseInt($(obj).text());
+    });
+
+    var amount_paid = 0;
+    $('.sub_paid').each(function(i, obj){
+        amount_paid = amount_paid + parseInt($(obj).text());
+    })
+
+    var amount_remaining = amount_total - amount_paid;
+    var buyer_name = $('#givenname').val() + " " + $('#surname').val();
+    var buyer_email = $('#email').val();
+
+    var is_fully_paid = false;
+    var pp = {};
+
+    c1_name = "PurchaseDetails";
+    data_c1 = {
+        "amount_total": amount_total,
+        "amount_paid": amount_remaining,
+        'amount_remaining': amount_paid,
+        'amount_currency': "{{transaction['currency']}}",
+        'buyer_name': buyer_name,
+        'buyer_email': buyer_email,
+        'description': "{{transaction['name']}}",
+        'purchase_qty': "{{transaction['no_bikes']}}",
+        'is_fully_paid': is_fully_paid,
+        'date_due': "{{transaction['max_date']}}"
+     };
+    Cookies.set(c1_name, data_c1);
+    Cookies.set("PartPayments", pp);
+    window.location.href="/zip/pay/{{token}}";
+}
+
+$(".alpha-only").on("keydown", function(event){
+    // Allow controls such as backspace
+    var arr = [8,16,17,20,35,32,36,37,38,39,40,45,46];
+
+    // Allow letters
+    for(var i = 65; i <= 90; i++){
+    arr.push(i);
+    }
+
+    // Prevent default if not in array
+    if(jQuery.inArray(event.which, arr) === -1){
+    event.preventDefault();
+    }
+});
+$(".num-only").on("keydown", function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+</script>
+</div>
+<footer class="footer">
+	<div class="uk-clearfix">
+	  <div class="uk-float-right">
+		  <ul class="uk-breadcrumb" style="margin-bottom: 0px; position: relative; left: -50px;">
+			<li><a href="https://skillion.com.au/">Website</a></li>
+			<li><a href="/tos">Terms of Service</a></li>
+			<li><a href="/privacy">Privacy Policy</a></li>
+		</ul>
+	  </div>
+	  <div class="uk-float-left">
+		  Skillion Inc.
+	  </div>
+  </div>
+</footer>
+</body>
+</html>

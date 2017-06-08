@@ -1,0 +1,118 @@
+<html class="offset-body">
+	<head>
+  		<link rel="stylesheet" type="text/css" href="https://getuikit.com/assets/uikit/dist/css/uikit.css?nc=2473"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit.js?nc=2473"></script>
+		<script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit-icons.js?nc=2473"></script>
+		<link rel="stylesheet" type="text/css" href="/static/css/rangeslider.css"></script>
+	    <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+		<link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+		<script type="text/javascript" src="/static/js/cookie.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+		  <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+		<title>Initiate Outright Sale</title>
+	</head>
+	<body>
+	<div class="content" uk-height-viewport="offset-bottom: 6">
+	<nav class="uk-navbar" style="background: #EEEEEE;">
+		<div class="uk-navbar-flip">
+			<ul class="uk-navbar-nav">
+				<li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+				{% if not guestmode %}
+				<li><a href="/profile">Profile</a></li>
+				<li><a href="/purchases">My Skillions</a></li>
+				<li><a href="/payments">My Payments</a></li>
+				{% endif %}
+			</ul>
+		</div>
+		<div class="uk-navbar-right">
+			<ul class="uk-navbar-nav">
+				<li>
+					<a class="uk-button uk-button-primary nav_button" id="submit">Next Step <span uk-icon="icon: chevron-right"></span></a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="box-holder">
+		<div class="uk-card uk-card-default uk-card-body" style="margin-top: 90px;">
+		<div class="total-box" id="{{token}}">
+			<h1><span class="currency">{{product['amount_currency']}}</span> <div id="amount"></div></h1>
+			<h4>Total Payable Amount</h4>
+		</div>
+		<div class="number-selector">
+			<h4>How many {{product['name']}} bikes would you like to purchase?<span class="amount-text"><span></span> Bike(s)</span></h4>
+			<input type="range" id="range1" min="1" max="10" step="1" value="1" data-rangeslider/>
+		</div>
+	</div>
+	</div>
+
+	<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/js/rangeslider.js"></script>
+	<script type="text/javascript">
+	$('#range1').rangeslider({
+		polyfill: false,
+		rangeClass: 'rangeslider',
+		disabledClass: 'rangeslider--disabled',
+		horizontalClass: 'rangeslider--horizontal',
+		verticalClass: 'rangeslider--vertical',
+		fillClass: 'rangeslider__fill',
+		handleClass: 'rangeslider__handle',
+		onInit: function() {},
+		onSlide: function(position, value) {
+			$('#amount').text(String({{product['amount_total']}} * value));
+			$('.amount-text span').text(value);
+		},
+		onSlideEnd: function(position, value) {}
+	});
+
+	$(document).ready(function(){
+		$('#amount').text(parseInt({{product['amount_total']}})*$('#range1').val());
+		$('.amount-text span').text($('#range1').val())
+	})
+
+	{% if not guestmode %}
+	$('#submit').click(function(){
+		data = {'token': "{{token}}", 'amount' : $('#range1').val() * parseFloat({{product['amount_total']}}), 'cost_per_item': parseFloat({{product['amount_total']}}), 'name': "{{product['name']}}", 'no_bikes': $('#range1').val(), 'part_payment': 'no', 'currency': $('.currency').text(), 'max_date': "today"}
+		$.post('/outright/buy/{{token}}',data,function(response,status){
+			var new_Address = "/outright/delivery/" + "{{token}}";
+			window.location.assign(new_Address);
+		})
+	});
+	{% else %}
+	$('#submit').click(function(){
+		nData = {'token': "{{token}}", 'amount' : $('#range1').val() * parseFloat({{product['amount_total']}}), 'cost_per_item': parseFloat({{product['amount_total']}}), 'name': "{{product['name']}}", 'no_bikes': $('#range1').val(), 'part_payment': 'no', 'currency': $('.currency').text(), 'max_date': "today"}
+		Cookies.set("data", nData);
+		Cookies.set("paymentType", "outright");
+		Cookies.set("paymentToken", "{{token}}");
+		window.location.assign("/guest/signup");
+	});
+	{% endif %}
+
+	$('.fl-paymentfrequency').on('change', function() {
+	  if(this.value == "Weekly"){
+		  $('.weekly_timeframe').css('display', 'block');
+		  $('.monthly_timeframe').css('display', 'none');
+	  } else{
+		  $('.weekly_timeframe').css('display', 'none');
+		  $('.monthly_timeframe').css('display', 'block');
+	  };
+  	});
+
+	</script>
+</div>
+	<footer class="footer">
+	    <div class="uk-clearfix">
+	      <div class="uk-float-right">
+	          <ul class="uk-breadcrumb" style="margin-bottom: 0px; position: relative; left: -50px;">
+	            <li><a href="https://skillion.com.au/">Website</a></li>
+	            <li><a href="/tos">Terms of Service</a></li>
+	            <li><a href="/privacy">Privacy Policy</a></li>
+	        </ul>
+	      </div>
+	      <div class="uk-float-left">
+	          Skillion Inc.
+	      </div>
+	  </div>
+	</footer>
+	</body>
+</html>

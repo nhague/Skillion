@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html class="bike-body">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+  <link rel="stylesheet" type="text/css" href="https://getuikit.com/assets/uikit/dist/css/uikit.css?nc=2473"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit.js?nc=2473"></script>
+    <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit-icons.js?nc=2473"></script>
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+</head>
+<body>
+    <div class="content" uk-height-viewport="offset-bottom: 6">
+    <nav class="uk-navbar" style="background: #EEEEEE">
+        <div class="uk-navbar-flip">
+            <ul class="uk-navbar-nav">
+                <li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+                <li><a href="/seller/r2XI3VkW3eG3M1A0RgsW">Shop Skillion</a></li>
+                <li><a href="/purchases">My Skillions</a></li>
+                <li><a href="/payments">My Payments</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                {% if user %}
+                <li><a href="/profile/edit">{{user['name_first']}} {{user['name_last']}}</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    {% if firstLogin == "true" %}
+    <div style="height: 40px;">
+
+    </div>
+    <div style="width: 60%; margin: 0 auto;">
+    <div class="uk-alert-success" uk-alert>
+        <a class="uk-alert-close" uk-close></a>
+        <h3 style="font-size: 35px;"><span uk-icon="icon: happy; ratio: 2.5" style="margin-right: 20px; position: relative; top: -3px;"></span>Welcome!</h3>
+        <p>
+            This is the first time you've logged in, please make your selection from the menu above.
+        </p>
+    </div>
+
+</div>
+    {% endif %}
+    <div class="profile-holder">
+    <!--
+    <div class="uk-child-width-1-4@m uk-grid-small uk-grid-match" uk-grid>
+        {% if facebook_connected %}
+        <div class="inline-card-profile">
+            <div class="uk-card uk-card-primary uk-card-body">
+                <h3 class="uk-card-title">Facebook Connected</h3>
+                <p><a href="/facebook/logout">Click here to disconnect</a></p>
+            </div>
+        </div>
+        {% else %}
+        <a class="inline-card-profile" href="/facebook">
+            <div class="uk-card uk-card-primary uk-card-body">
+                <h3 class="uk-card-title">Connect Facebook</h3>
+                <p>Connect your Facebook Account</p>
+            </div>
+        </a>
+        {% endif %}
+    </div>-->
+</div>
+</div>
+<footer class="footer">
+    <div class="uk-clearfix">
+      <div class="uk-float-right">
+          <ul class="uk-breadcrumb" style="margin-bottom: 0px;">
+            <li><a href="https://skillion.com.au/">Website</a></li>
+            <li><a href="/tos">Terms of Service</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="uk-float-left">
+          Skillion Inc.
+      </div>
+  </div>
+</footer>
+</body>
+</html>

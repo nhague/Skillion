@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html class="offset-body">
+<head>
+    <meta charset="UTF-8">
+    <title>Skillion Login</title>
+    <link rel='stylesheet prefetch' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css'>
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" type="text/css" href="https://getuikit.com/assets/uikit/dist/css/uikit.css?nc=2473"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit.js?nc=2473"></script>
+    <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit-icons.js?nc=2473"></script>
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+</head>
+<body class="offset-body">
+    <div class="uk-child-width-1-2" uk-grid>
+        <div class="left-login">
+            <div class="top-logo">
+                <div style="margin-top: 20px;"></div>
+                <span>Skillion</span>
+            </div>
+            <h4 class="login-title">We are Skillion</h4>
+            <p class="login-largep">
+                Designed In Australia. <br /><br />We stand for energy and passion. This is something we put into each and every build of our hardcore electric bikes.
+            </p>
+            <p class="login-smallp">
+                We design our bikes here in Sydney, and we use high-grade components from trusted manufacturers like Shimano, Zoom & TGS. this means we’re built Australia-tough and know our bikes will perform just as well in the Bush, as they do on Brisbane roads.
+            </p>
+            <a class="uk-button uk-button-secondary button-login" href="https://skillion.com.au">Learn More</a>
+        </div>
+        <div class="right-login">
+
+            <div class="logger">
+            {% if error %}
+            <div class="uk-alert-danger" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <h3>Error</h3>
+                <p>{{error}}</p>
+            </div>
+            {% endif %}
+            {% if success %}
+            <div class="uk-alert-success" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <h3>Thank you!</h3>
+                <p>{{success}}</p>
+            </div>
+            {% endif %}
+            <div class="login-card">
+              <h1>Login</h1>
+              <div style="text-align: center; position: relative; top: -12px;">
+                  <label class="uk-form-label" for="form-stacked-text" style="font-weight: 400;">Available only to Skillion customers</label>
+              </div>
+              <form class="uk-form-stacked" method="post" action="/">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Username</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" id="form-stacked-text" type="text" name="username" placeholder="Your Username...">
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Password</label>
+                        <div class="uk-form-controls">
+                            <input type="hidden" name="wasGuest" value="None" id="logInTyTo"/>
+                            <input class="uk-input" id="form-stacked-text" type="password" name="password" placeholder="Your Password...">
+                        </div>
+                    </div>
+                    <input type="submit" name="login" class="login login-submit" value="LOG IN SECURELY">
+                </form>
+                <div style="text-align: center; margin-top: 50px;">
+                    <a href="/reset/forgot">Forgot my password</a>
+                </div>
+          </div>
+
+      </div>
+        </div>
+    </div>
+    <!-- <div id="error"><img src="https://dl.dropboxusercontent.com/u/23299152/Delete-icon.png" /> Your caps-lock is on.</div> -->
+    <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+</body>
+</html>

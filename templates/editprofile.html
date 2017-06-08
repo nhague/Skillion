@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Profile</title>
+  <link rel="stylesheet" type="text/css" href="https://getuikit.com/assets/uikit/dist/css/uikit.css?nc=2473"></script>
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+  <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit.js?nc=2473"></script>
+  <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit-icons.js?nc=2473"></script>
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+</head>
+<body class="offset-body">
+    <div class="content" uk-height-viewport="offset-bottom: 6">
+    <nav class="uk-navbar" style="background: #EEEEEE">
+        <div class="uk-navbar-flip">
+            <ul class="uk-navbar-nav">
+                <li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+                <li><a href="/seller/r2XI3VkW3eG3M1A0RgsW">Shop Skillion</a></li>
+                <li><a href="/purchases">My Skillions</a></li>
+                <li><a href="/payments">My Payments</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                <li><a href="/logout">Log Out</a></li>
+                {% if user %}
+                <li><a href="/profile/edit">{{user['name_first']}} {{user['name_last']}}</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="ep-holder" style="padding-bottom: 100px;">
+
+    <div class="uk-card uk-card-default uk-card-body" style="margin-top: 40px;">
+        <div style="text-align: right; position: relative; top: -20px; right: -10px;">
+            <a href="/profile" uk-icon="icon: close"></a>
+        </div>
+        <ul class="uk-child-width-expand" style="margin-top: 0px" uk-tab>
+            <li class="uk-active"><a href="#md">Main Details</a></li>
+            <li><a href="#ya">Your Address</a></li>
+            <li><a href="#cd">Contact Details</a></li>
+            <li><a href="#cp">Update Password</a></li>
+        </ul>
+        <ul class="uk-switcher">
+            <li id="md" class="uk-active">
+                <form class="uk-form-horizontal uk-margin-large" method="post" action="/profile/edit">
+                    <input type="hidden" name="which_form" value="1"/ />
+                    <div style="margin-top: 0px">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-horizontal-text">Given Name</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input alpha-only" id="form-horizontal-text" type="text" value="{{customer.name_first}}" name="firstname" placeholder="Given Name...">
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-horizontal-text">Surname</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input alpha-only" id="form-horizontal-text" type="text" value="{{customer.name_last}}" name="lastname" placeholder="Surname...">
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-horizontal-text">Business Name</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input alpha-dot-only" id="form-horizontal-text" type="text" value="{{customer.business_name}}" name="business_name" placeholder="Business Name...">
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-horizontal-text">Username</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" id="form-horizontal-text" type="text" value="{{customer['username']}}" name="username" placeholder="Username...">
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="form-horizontal-select">Timezone</label>
+                        <div class="uk-form-controls">
+                            <select class="uk-select" id="form-stacked-select" name="timezone">
+                                <option VALUE="304">Australia/Adelaide</option>
+                                <option VALUE="305">Australia/Brisbane</option>
+                                <option VALUE="306">Australia/Broken_Hill</option>
+                                <option VALUE="307">Australia/Currie</option>
+                                <option VALUE="308">Australia/Darwin</option>
+                                <option VALUE="309">Australia/Eucla</option>
+                                <option VALUE="310">Australia/Hobart</option>
+                                <option VALUE="311">Australia/Lindeman</option>
+                                <option VALUE="312">Australia/Lord_Howe</option>
+                                <option VALUE="313">Australia/Melbourne</option>
+                                <option VALUE="314">Australia/Perth</option>
+                                <option VALUE="315">Australia/Sydney</option>
+                                <optgroup label="Other countries">
+                                    <option VALUE="1">Africa/Abidjan</option>
+                                    <option VALUE="2">Africa/Accra</option>
+                                    <option VALUE="3">Africa/Addis_Ababa</option>
+                                    <option VALUE="4">Africa/Algiers</option>
+                                    <option VALUE="5">Africa/Asmara</option>
+                                    <option VALUE="6">Africa/Bamako</option>
+                                    <option VALUE="7">Africa/Bangui</option>
+                                    <option VALUE="8">Africa/Banjul</option>
+                                    <option VALUE="9">Africa/Bissau</option>
+                                    <option VALUE="10">Africa/Blantyre</option>
+                                    <option VALUE="11">Africa/Brazzaville</option>
+                                    <option VALUE="12">Africa/Bujumbura</option>
+                                    <option VALUE="13">Africa/Cairo</option>
+                                    <option VALUE="14">Africa/Casablanca</option>
+                                    <option VALUE="15">Africa/Ceuta</option>
+                                    <option VALUE="16">Africa/Conakry</option>
+                                    <option VALUE="17">Africa/Dakar</option>
+                                    <option VALUE="18">Africa/Dar_es_Salaam</option>
+                                    <option VALUE="19">Africa/Djibouti</option>
+                                    <option VALUE="20">Africa/Douala</option>
+                                    <option VALUE="21">Africa/El_Aaiun</option>
+                                    <option VALUE="22">Africa/Freetown</option>
+                                    <option VALUE="23">Africa/Gaborone</option>
+                                    <option VALUE="24">Africa/Harare</option>
+                                    <option VALUE="25">Africa/Johannesburg</option>
+                                    <option VALUE="26">Africa/Juba</option>
+                                    <option VALUE="27">Africa/Kampala</option>
+                                    <option VALUE="28">Africa/Khartoum</option>
+                                    <option VALUE="29">Africa/Kigali</option>
+                                    <option VALUE="30">Africa/Kinshasa</option>
+                                    <option VALUE="31">Africa/Lagos</option>
+                                    <option VALUE="32">Africa/Libreville</option>
+                                    <option VALUE="33">Africa/Lome</option>
+                                    <option VALUE="34">Africa/Luanda</option>
+                                    <option VALUE="35">Africa/Lubumbashi</option>
+                                    <option VALUE="36">Africa/Lusaka</option>
+                                    <option VALUE="37">Africa/Malabo</option>
+                                    <option VALUE="38">Africa/Maputo</option>
+                                    <option VALUE="39">Africa/Maseru</option>
+                                    <option VALUE="40">Africa/Mbabane</option>
+                                    <option VALUE="41">Africa/Mogadishu</option>
+                                    <option VALUE="42">Africa/Monrovia</option>
+                                    <option VALUE="43">Africa/Nairobi</option>
+                                    <option VALUE="44">Africa/Ndjamena</option>
+                                    <option VALUE="45">Africa/Niamey</option>
+                                    <option VALUE="46">Africa/Nouakchott</option>
+                                    <option VALUE="47">Africa/Ouagadougou</option>
+                                    <option VALUE="48">Africa/Porto-Novo</option>
+                                    <option VALUE="49">Africa/Sao_Tome</option>
+                                    <option VALUE="50">Africa/Tripoli</option>
+                                    <option VALUE="51">Africa/Tunis</option>
+                                    <option VALUE="52">Africa/Windhoek</option>
+                                    <option VALUE="53">America/Adak</option>
+                                    <option VALUE="54">America/Anchorage</option>
+                                    <option VALUE="55">America/Anguilla</option>
+                                    <option VALUE="56">America/Antigua</option>
+                                    <option VALUE="57">America/Araguaina</option>
+                                    <option VALUE="58">America/Argentina/Buenos_Aires</option>
+                                    <option VALUE="59">America/Argentina/Catamarca</option>
+                                    <option VALUE="60">America/Argentina/Cordoba</option>
+                                    <option VALUE="61">America/Argentina/Jujuy</option>
+                                    <option VALUE="62">America/Argentina/La_Rioja</option>
+                                    <option VALUE="63">America/Argentina/Mendoza</option>
+                                    <option VALUE="64">America/Argentina/Rio_Gallegos</option>
+                                    <option VALUE="65">America/Argentina/Salta</option>
+                                    <option VALUE="66">America/Argentina/San_Juan</option>
+                                    <option VALUE="67">America/Argentina/San_Luis</option>
+                                    <option VALUE="68">America/Argentina/Tucuman</option>
+                                    <option VALUE="69">America/Argentina/Ushuaia</option>
+                                    <option VALUE="70">America/Aruba</option>
+                                    <option VALUE="71">America/Asuncion</option>
+                                    <option VALUE="72">America/Atikokan</option>
+                                    <option VALUE="73">America/Bahia</option>
+                                    <option VALUE="74">America/Bahia_Banderas</option>
+                                    <option VALUE="75">America/Barbados</option>
+                                    <option VALUE="76">America/Belem</option>
+                                    <option VALUE="77">America/Belize</option>
+                                    <option VALUE="78">America/Blanc-Sablon</option>
+                                    <option VALUE="79">America/Boa_Vista</option>
+                                    <option VALUE="80">America/Bogota</option>
+                                    <option VALUE="81">America/Boise</option>
+                                    <option VALUE="82">America/Cambridge_Bay</option>
+                                    <option VALUE="83">America/Campo_Grande</option>
+                                    <option VALUE="84">America/Cancun</option>
+                                    <option VALUE="85">America/Caracas</option>
+                                    <option VALUE="86">America/Cayenne</option>
+                                    <option VALUE="87">America/Cayman</option>
+                                    <option VALUE="88">America/Chicago</option>
+                                    <option VALUE="89">America/Chihuahua</option>
+                                    <option VALUE="90">America/Costa_Rica</option>
+                                    <option VALUE="91">America/Creston</option>
+                                    <option VALUE="92">America/Cuiaba</option>
+                                    <option VALUE="93">America/Curacao</option>
+                                    <option VALUE="94">America/Danmarkshavn</option>
+                                    <option VALUE="95">America/Dawson</option>
+                                    <option VALUE="96">America/Dawson_Creek</option>
+                                    <option VALUE="97">America/Denver</option>
+                                    <option VALUE="98">America/Detroit</option>
+                                    <option VALUE="99">America/Dominica</option>
+                                    <option VALUE="100">America/Edmonton</option>
+                                    <option VALUE="101">America/Eirunepe</option>
+                                    <option VALUE="102">America/El_Salvador</option>
+                                    <option VALUE="103">America/Fortaleza</option>
+                                    <option VALUE="104">America/Fort_Nelson</option>
+                                    <option VALUE="105">America/Glace_Bay</option>
+                                    <option VALUE="106">America/Godthab</option>
+                                    <option VALUE="107">America/Goose_Bay</option>
+                                    <option VALUE="108">America/Grand_Turk</option>
+                                    <option VALUE="109">America/Grenada</option>
+                                    <option VALUE="110">America/Guadeloupe</option>
+                                    <option VALUE="111">America/Guatemala</option>
+                                    <option VALUE="112">America/Guayaquil</option>
+                                    <option VALUE="113">America/Guyana</option>
+                                    <option VALUE="114">America/Halifax</option>
+                                    <option VALUE="115">America/Havana</option>
+                                    <option VALUE="116">America/Hermosillo</option>
+                                    <option VALUE="117">America/Indiana/Indianapolis</option>
+                                    <option VALUE="118">America/Indiana/Knox</option>
+                                    <option VALUE="119">America/Indiana/Marengo</option>
+                                    <option VALUE="120">America/Indiana/Petersburg</option>
+                                    <option VALUE="121">America/Indiana/Tell_City</option>
+                                    <option VALUE="122">America/Indiana/Vevay</option>
+                                    <option VALUE="123">America/Indiana/Vincennes</option>
+                                    <option VALUE="124">America/Indiana/Winamac</option>
+                                    <option VALUE="125">America/Inuvik</option>
+                                    <option VALUE="126">America/Iqaluit</option>
+                                    <option VALUE="127">America/Jamaica</option>
+                                    <option VALUE="128">America/Juneau</option>
+                                    <option VALUE="129">America/Kentucky/Louisville</option>
+                                    <option VALUE="130">America/Kentucky/Monticello</option>
+                                    <option VALUE="131">America/Kralendijk</option>
+                                    <option VALUE="132">America/La_Paz</option>
+                                    <option VALUE="133">America/Lima</option>
+                                    <option VALUE="134">America/Los_Angeles</option>
+                                    <option VALUE="135">America/Lower_Princes</option>
+                                    <option VALUE="136">America/Maceio</option>
+                                    <option VALUE="137">America/Managua</option>
+                                    <option VALUE="138">America/Manaus</option>
+                                    <option VALUE="139">America/Marigot</option>
+                                    <option VALUE="140">America/Martinique</option>
+                                    <option VALUE="141">America/Matamoros</option>
+                                    <option VALUE="142">America/Mazatlan</option>
+                                    <option VALUE="143">America/Menominee</option>
+                                    <option VALUE="144">America/Merida</option>
+                                    <option VALUE="145">America/Metlakatla</option>
+                                    <option VALUE="146">America/Mexico_City</option>
+                                    <option VALUE="147">America/Miquelon</option>
+                                    <option VALUE="148">America/Moncton</option>
+                                    <option VALUE="149">America/Monterrey</option>
+                                    <option VALUE="150">America/Montevideo</option>
+                                    <option VALUE="151">America/Montserrat</option>
+                                    <option VALUE="152">America/Nassau</option>
+                                    <option VALUE="153">America/New_York</option>
+                                    <option VALUE="154">America/Nipigon</option>
+                                    <option VALUE="155">America/Nome</option>
+                                    <option VALUE="156">America/Noronha</option>
+                                    <option VALUE="157">America/North_Dakota/Beulah</option>
+                                    <option VALUE="158">America/North_Dakota/Center</option>
+                                    <option VALUE="159">America/North_Dakota/New_Salem</option>
+                                    <option VALUE="160">America/Ojinaga</option>
+                                    <option VALUE="161">America/Panama</option>
+                                    <option VALUE="162">America/Pangnirtung</option>
+                                    <option VALUE="163">America/Paramaribo</option>
+                                    <option VALUE="164">America/Phoenix</option>
+                                    <option VALUE="165">America/Port-au-Prince</option>
+                                    <option VALUE="166">America/Port_of_Spain</option>
+                                    <option VALUE="167">America/Porto_Velho</option>
+                                    <option VALUE="168">America/Puerto_Rico</option>
+                                    <option VALUE="169">America/Punta_Arenas</option>
+                                    <option VALUE="170">America/Rainy_River</option>
+                                    <option VALUE="171">America/Rankin_Inlet</option>
+                                    <option VALUE="172">America/Recife</option>
+                                    <option VALUE="173">America/Regina</option>
+                                    <option VALUE="174">America/Resolute</option>
+                                    <option VALUE="175">America/Rio_Branco</option>
+                                    <option VALUE="176">America/Santarem</option>
+                                    <option VALUE="177">America/Santiago</option>
+                                    <option VALUE="178">America/Santo_Domingo</option>
+                                    <option VALUE="179">America/Sao_Paulo</option>
+                                    <option VALUE="180">America/Scoresbysund</option>
+                                    <option VALUE="181">America/Sitka</option>
+                                    <option VALUE="182">America/St_Barthelemy</option>
+                                    <option VALUE="183">America/St_Johns</option>
+                                    <option VALUE="184">America/St_Kitts</option>
+                                    <option VALUE="185">America/St_Lucia</option>
+                                    <option VALUE="186">America/St_Thomas</option>
+                                    <option VALUE="187">America/St_Vincent</option>
+                                    <option VALUE="188">America/Swift_Current</option>
+                                    <option VALUE="189">America/Tegucigalpa</option>
+                                    <option VALUE="190">America/Thule</option>
+                                    <option VALUE="191">America/Thunder_Bay</option>
+                                    <option VALUE="192">America/Tijuana</option>
+                                    <option VALUE="193">America/Toronto</option>
+                                    <option VALUE="194">America/Tortola</option>
+                                    <option VALUE="195">America/Vancouver</option>
+                                    <option VALUE="196">America/Whitehorse</option>
+                                    <option VALUE="197">America/Winnipeg</option>
+                                    <option VALUE="198">America/Yakutat</option>
+                                    <option VALUE="199">America/Yellowknife</option>
+                                    <option VALUE="200">Antarctica/Casey</option>
+                                    <option VALUE="201">Antarctica/Davis</option>
+                                    <option VALUE="202">Antarctica/DumontDUrville</option>
+                                    <option VALUE="203">Antarctica/Macquarie</option>
+                                    <option VALUE="204">Antarctica/Mawson</option>
+                                    <option VALUE="205">Antarctica/McMurdo</option>
+                                    <option VALUE="206">Antarctica/Palmer</option>
+                                    <option VALUE="207">Antarctica/Rothera</option>
+                                    <option VALUE="208">Antarctica/Syowa</option>
+                                    <option VALUE="209">Antarctica/Troll</option>
+                                    <option VALUE="210">Antarctica/Vostok</option>
+                                    <option VALUE="211">Arctic/Longyearbyen</option>
+                                    <option VALUE="212">Asia/Aden</option>
+                                    <option VALUE="213">Asia/Almaty</option>
+                                    <option VALUE="214">Asia/Amman</option>
+                                    <option VALUE="215">Asia/Anadyr</option>
+                                    <option VALUE="216">Asia/Aqtau</option>
+                                    <option VALUE="217">Asia/Aqtobe</option>
+                                    <option VALUE="218">Asia/Ashgabat</option>
+                                    <option VALUE="219">Asia/Atyrau</option>
+                                    <option VALUE="220">Asia/Baghdad</option>
+                                    <option VALUE="221">Asia/Bahrain</option>
+                                    <option VALUE="222">Asia/Baku</option>
+                                    <option VALUE="223">Asia/Bangkok</option>
+                                    <option VALUE="224">Asia/Barnaul</option>
+                                    <option VALUE="225">Asia/Beirut</option>
+                                    <option VALUE="226">Asia/Bishkek</option>
+                                    <option VALUE="227">Asia/Brunei</option>
+                                    <option VALUE="228">Asia/Chita</option>
+                                    <option VALUE="229">Asia/Choibalsan</option>
+                                    <option VALUE="230">Asia/Colombo</option>
+                                    <option VALUE="231">Asia/Damascus</option>
+                                    <option VALUE="232">Asia/Dhaka</option>
+                                    <option VALUE="233">Asia/Dili</option>
+                                    <option VALUE="234">Asia/Dubai</option>
+                                    <option VALUE="235">Asia/Dushanbe</option>
+                                    <option VALUE="236">Asia/Famagusta</option>
+                                    <option VALUE="237">Asia/Gaza</option>
+                                    <option VALUE="238">Asia/Hebron</option>
+                                    <option VALUE="239">Asia/Ho_Chi_Minh</option>
+                                    <option VALUE="240">Asia/Hong_Kong</option>
+                                    <option VALUE="241">Asia/Hovd</option>
+                                    <option VALUE="242">Asia/Irkutsk</option>
+                                    <option VALUE="243">Asia/Jakarta</option>
+                                    <option VALUE="244">Asia/Jayapura</option>
+                                    <option VALUE="245">Asia/Jerusalem</option>
+                                    <option VALUE="246">Asia/Kabul</option>
+                                    <option VALUE="247">Asia/Kamchatka</option>
+                                    <option VALUE="248">Asia/Karachi</option>
+                                    <option VALUE="249">Asia/Kathmandu</option>
+                                    <option VALUE="250">Asia/Khandyga</option>
+                                    <option VALUE="251">Asia/Kolkata</option>
+                                    <option VALUE="252">Asia/Krasnoyarsk</option>
+                                    <option VALUE="253">Asia/Kuala_Lumpur</option>
+                                    <option VALUE="254">Asia/Kuching</option>
+                                    <option VALUE="255">Asia/Kuwait</option>
+                                    <option VALUE="256">Asia/Macau</option>
+                                    <option VALUE="257">Asia/Magadan</option>
+                                    <option VALUE="258">Asia/Makassar</option>
+                                    <option VALUE="259">Asia/Manila</option>
+                                    <option VALUE="260">Asia/Muscat</option>
+                                    <option VALUE="261">Asia/Nicosia</option>
+                                    <option VALUE="262">Asia/Novokuznetsk</option>
+                                    <option VALUE="263">Asia/Novosibirsk</option>
+                                    <option VALUE="264">Asia/Omsk</option>
+                                    <option VALUE="265">Asia/Oral</option>
+                                    <option VALUE="266">Asia/Phnom_Penh</option>
+                                    <option VALUE="267">Asia/Pontianak</option>
+                                    <option VALUE="268">Asia/Pyongyang</option>
+                                    <option VALUE="269">Asia/Qatar</option>
+                                    <option VALUE="270">Asia/Qyzylorda</option>
+                                    <option VALUE="271">Asia/Riyadh</option>
+                                    <option VALUE="272">Asia/Sakhalin</option>
+                                    <option VALUE="273">Asia/Samarkand</option>
+                                    <option VALUE="274">Asia/Seoul</option>
+                                    <option VALUE="275">Asia/Shanghai</option>
+                                    <option VALUE="276">Asia/Singapore</option>
+                                    <option VALUE="277">Asia/Srednekolymsk</option>
+                                    <option VALUE="278">Asia/Taipei</option>
+                                    <option VALUE="279">Asia/Tashkent</option>
+                                    <option VALUE="280">Asia/Tbilisi</option>
+                                    <option VALUE="281">Asia/Tehran</option>
+                                    <option VALUE="282">Asia/Thimphu</option>
+                                    <option VALUE="283">Asia/Tokyo</option>
+                                    <option VALUE="284">Asia/Tomsk</option>
+                                    <option VALUE="285">Asia/Ulaanbaatar</option>
+                                    <option VALUE="286">Asia/Urumqi</option>
+                                    <option VALUE="287">Asia/Ust-Nera</option>
+                                    <option VALUE="288">Asia/Vientiane</option>
+                                    <option VALUE="289">Asia/Vladivostok</option>
+                                    <option VALUE="290">Asia/Yakutsk</option>
+                                    <option VALUE="291">Asia/Yangon</option>
+                                    <option VALUE="292">Asia/Yekaterinburg</option>
+                                    <option VALUE="293">Asia/Yerevan</option>
+                                    <option VALUE="294">Atlantic/Azores</option>
+                                    <option VALUE="295">Atlantic/Bermuda</option>
+                                    <option VALUE="296">Atlantic/Canary</option>
+                                    <option VALUE="297">Atlantic/Cape_Verde</option>
+                                    <option VALUE="298">Atlantic/Faroe</option>
+                                    <option VALUE="299">Atlantic/Madeira</option>
+                                    <option VALUE="300">Atlantic/Reykjavik</option>
+                                    <option VALUE="301">Atlantic/South_Georgia</option>
+                                    <option VALUE="302">Atlantic/Stanley</option>
+                                    <option VALUE="303">Atlantic/St_Helena</option>
+                                    <option VALUE="316">Europe/Amsterdam</option>
+                                    <option VALUE="317">Europe/Andorra</option>
+                                    <option VALUE="318">Europe/Astrakhan</option>
+                                    <option VALUE="319">Europe/Athens</option>
+                                    <option VALUE="320">Europe/Belgrade</option>
+                                    <option VALUE="321">Europe/Berlin</option>
+                                    <option VALUE="322">Europe/Bratislava</option>
+                                    <option VALUE="323">Europe/Brussels</option>
+                                    <option VALUE="324">Europe/Bucharest</option>
+                                    <option VALUE="325">Europe/Budapest</option>
+                                    <option VALUE="326">Europe/Busingen</option>
+                                    <option VALUE="327">Europe/Chisinau</option>
+                                    <option VALUE="328">Europe/Copenhagen</option>
+                                    <option VALUE="329">Europe/Dublin</option>
+                                    <option VALUE="330">Europe/Gibraltar</option>
+                                    <option VALUE="331">Europe/Guernsey</option>
+                                    <option VALUE="332">Europe/Helsinki</option>
+                                    <option VALUE="333">Europe/Isle_of_Man</option>
+                                    <option VALUE="334">Europe/Istanbul</option>
+                                    <option VALUE="335">Europe/Jersey</option>
+                                    <option VALUE="336">Europe/Kaliningrad</option>
+                                    <option VALUE="337">Europe/Kiev</option>
+                                    <option VALUE="338">Europe/Kirov</option>
+                                    <option VALUE="339">Europe/Lisbon</option>
+                                    <option VALUE="340">Europe/Ljubljana</option>
+                                    <option VALUE="341">Europe/London</option>
+                                    <option VALUE="342">Europe/Luxembourg</option>
+                                    <option VALUE="343">Europe/Madrid</option>
+                                    <option VALUE="344">Europe/Malta</option>
+                                    <option VALUE="345">Europe/Mariehamn</option>
+                                    <option VALUE="346">Europe/Minsk</option>
+                                    <option VALUE="347">Europe/Monaco</option>
+                                    <option VALUE="348">Europe/Moscow</option>
+                                    <option VALUE="349">Europe/Oslo</option>
+                                    <option VALUE="350">Europe/Paris</option>
+                                    <option VALUE="351">Europe/Podgorica</option>
+                                    <option VALUE="352">Europe/Prague</option>
+                                    <option VALUE="353">Europe/Riga</option>
+                                    <option VALUE="354">Europe/Rome</option>
+                                    <option VALUE="355">Europe/Samara</option>
+                                    <option VALUE="356">Europe/San_Marino</option>
+                                    <option VALUE="357">Europe/Sarajevo</option>
+                                    <option VALUE="358">Europe/Saratov</option>
+                                    <option VALUE="359">Europe/Simferopol</option>
+                                    <option VALUE="360">Europe/Skopje</option>
+                                    <option VALUE="361">Europe/Sofia</option>
+                                    <option VALUE="362">Europe/Stockholm</option>
+                                    <option VALUE="363">Europe/Tallinn</option>
+                                    <option VALUE="364">Europe/Tirane</option>
+                                    <option VALUE="365">Europe/Ulyanovsk</option>
+                                    <option VALUE="366">Europe/Uzhgorod</option>
+                                    <option VALUE="367">Europe/Vaduz</option>
+                                    <option VALUE="368">Europe/Vatican</option>
+                                    <option VALUE="369">Europe/Vienna</option>
+                                    <option VALUE="370">Europe/Vilnius</option>
+                                    <option VALUE="371">Europe/Volgograd</option>
+                                    <option VALUE="372">Europe/Warsaw</option>
+                                    <option VALUE="373">Europe/Zagreb</option>
+                                    <option VALUE="374">Europe/Zaporozhye</option>
+                                    <option VALUE="375">Europe/Zurich</option>
+                                    <option VALUE="376">Indian/Antananarivo</option>
+                                    <option VALUE="377">Indian/Chagos</option>
+                                    <option VALUE="378">Indian/Christmas</option>
+                                    <option VALUE="379">Indian/Cocos</option>
+                                    <option VALUE="380">Indian/Comoro</option>
+                                    <option VALUE="381">Indian/Kerguelen</option>
+                                    <option VALUE="382">Indian/Mahe</option>
+                                    <option VALUE="383">Indian/Maldives</option>
+                                    <option VALUE="384">Indian/Mauritius</option>
+                                    <option VALUE="385">Indian/Mayotte</option>
+                                    <option VALUE="386">Indian/Reunion</option>
+                                    <option VALUE="387">Pacific/Apia</option>
+                                    <option VALUE="388">Pacific/Auckland</option>
+                                    <option VALUE="389">Pacific/Bougainville</option>
+                                    <option VALUE="390">Pacific/Chatham</option>
+                                    <option VALUE="391">Pacific/Chuuk</option>
+                                    <option VALUE="392">Pacific/Easter</option>
+                                    <option VALUE="393">Pacific/Efate</option>
+                                    <option VALUE="394">Pacific/Enderbury</option>
+                                    <option VALUE="395">Pacific/Fakaofo</option>
+                                    <option VALUE="396">Pacific/Fiji</option>
+                                    <option VALUE="397">Pacific/Funafuti</option>
+                                    <option VALUE="398">Pacific/Galapagos</option>
+                                    <option VALUE="399">Pacific/Gambier</option>
+                                    <option VALUE="400">Pacific/Guadalcanal</option>
+                                    <option VALUE="401">Pacific/Guam</option>
+                                    <option VALUE="402">Pacific/Honolulu</option>
+                                    <option VALUE="403">Pacific/Kiritimati</option>
+                                    <option VALUE="404">Pacific/Kosrae</option>
+                                    <option VALUE="405">Pacific/Kwajalein</option>
+                                    <option VALUE="406">Pacific/Majuro</option>
+                                    <option VALUE="407">Pacific/Marquesas</option>
+                                    <option VALUE="408">Pacific/Midway</option>
+                                    <option VALUE="409">Pacific/Nauru</option>
+                                    <option VALUE="410">Pacific/Niue</option>
+                                    <option VALUE="411">Pacific/Norfolk</option>
+                                    <option VALUE="412">Pacific/Noumea</option>
+                                    <option VALUE="413">Pacific/Pago_Pago</option>
+                                    <option VALUE="414">Pacific/Palau</option>
+                                    <option VALUE="415">Pacific/Pitcairn</option>
+                                    <option VALUE="416">Pacific/Pohnpei</option>
+                                    <option VALUE="417">Pacific/Port_Moresby</option>
+                                    <option VALUE="418">Pacific/Rarotonga</option>
+                                    <option VALUE="419">Pacific/Saipan</option>
+                                    <option VALUE="420">Pacific/Tahiti</option>
+                                    <option VALUE="421">Pacific/Tarawa</option>
+                                    <option VALUE="422">Pacific/Tongatapu</option>
+                                    <option VALUE="423">Pacific/Wake</option>
+                                    <option VALUE="424">Pacific/Wallis</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                    <input class="uk-button uk-width-1-1 uk-button-large" style="margin-top: 20px; background: #2ecc71; color: #FFF;" type="submit" value="Update Information"/>
+                </form>
+                </div>
+                </form>
+            </li>
+            <li id="cd">
+                            <h3 class='uk-article-meta' style="margin: 0px; padding-top: 0px;">Actual Address</h3>
+                            <form class="uk-form-horizontal" method="post" action="/profile/edit">
+                            <input type="hidden" name="which_form" value="2"/ />
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Address Line One</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" name="addresslineone" value="{{actual_address['address_line1']}}" placeholder="Address Line One...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Address Line Two</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" name="addresslinetwo" value="{{actual_address['address_line2']}}" placeholder="Address Line Two...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Name of City</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" name="city" value="{{actual_address['address_city']}}" placeholder="City/Town...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">State</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" name="state" value="{{actual_address['address_region']}}" placeholder="State...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Postal Code/Zip Code</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input num-only" id="form-horizontal-text" type="text" name="postal" value="{{actual_address['address_postcode']}}" placeholder="Postal Address/Zip Code...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Country</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" name="country" value="{{actual_address['address_country_name']}}" placeholder="Country...">
+                                </div>
+                            </div>
+                            <hr class="uk-divider-icon" style="padding-top: 80px;">
+                            <h3 class='uk-article-meta' style="margin: 0px; padding-top: 0px;">Postal Address</h3>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Address Line One</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" value="{{postal_address['address_line1']}}" name="postal_addresslineone" placeholder="Address Line One...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Address Line Two</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" value="{{postal_address['address_line2']}}" name="postal_addresslinetwo" placeholder="Address Line Two...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Name of City</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" value="{{postal_address['address_city']}}" name="postal_city" placeholder="City/Town...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">State</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" value="{{postal_address['address_region']}}" name="postal_state" placeholder="State...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Postal Code / Zip Code</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input num-only" id="form-horizontal-text" type="text" value="{{postal_address['address_postcode']}}" name="postal_postal" placeholder="Postal Address / Zip Code...">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-horizontal-text">Country</label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="form-horizontal-text" type="text" value="{{postal_address['address_country_name']}}" name="postal_country" placeholder="Country...">
+                                </div>
+                            </div>
+                            <input class="uk-button uk-width-1-1 uk-button-large" style="margin-top: 20px; background: #2ecc71; color: #FFF;" type="submit" name="submit" value="Save Address"/>
+                        </form>
+                        </li>
+            </li>
+            <li id="ad">
+                <div style="margin-top: 60px">
+				 <div class="uk-margin">
+                     <form class="uk-form-stacked uk-margin-large" method="post" action="/profile/edit">
+                         <input type="hidden" name="which_form" value="4"/ />
+                <div class="uk-grid-small" uk-grid>
+                    <div class="uk-width-1-4@s">
+                        <label class="uk-form-label" for="form-stacked-text">Country Telephone Code</label>
+                        <div class="uk-form-controls">
+                        <select name="countrycode" class="uk-select" id="form-stacked-select">
+                            <option data-countryCode="AU" value="51">Australia (+61)</option>
+                            <option data-countryCode="GB" value="44" Selected>UK (+44)</option>
+                            <option data-countryCode="US" value="1">USA (+1)</option>
+                            <optgroup label="Other countries">
+                                <option data-countryCode="DZ" value="213">Algeria (+213)</option>
+                                <option data-countryCode="AD" value="376">Andorra (+376)</option>
+                                <option data-countryCode="AO" value="244">Angola (+244)</option>
+                                <option data-countryCode="AI" value="1264">Anguilla (+1264)</option>
+                                <option data-countryCode="AG" value="1268">Antigua &amp; Barbuda (+1268)</option>
+                                <option data-countryCode="AR" value="54">Argentina (+54)</option>
+                                <option data-countryCode="AM" value="374">Armenia (+374)</option>
+                                <option data-countryCode="AW" value="297">Aruba (+297)</option>
+                                <!--<option data-countryCode="AU" value="61">Australia (+61)</option>-->
+                                <option data-countryCode="AT" value="43">Austria (+43)</option>
+                                <option data-countryCode="AZ" value="994">Azerbaijan (+994)</option>
+                                <option data-countryCode="BS" value="1242">Bahamas (+1242)</option>
+                                <option data-countryCode="BH" value="973">Bahrain (+973)</option>
+                                <option data-countryCode="BD" value="880">Bangladesh (+880)</option>
+                                <option data-countryCode="BB" value="1246">Barbados (+1246)</option>
+                                <option data-countryCode="BY" value="375">Belarus (+375)</option>
+                                <option data-countryCode="BE" value="32">Belgium (+32)</option>
+                                <option data-countryCode="BZ" value="501">Belize (+501)</option>
+                                <option data-countryCode="BJ" value="229">Benin (+229)</option>
+                                <option data-countryCode="BM" value="1441">Bermuda (+1441)</option>
+                                <option data-countryCode="BT" value="975">Bhutan (+975)</option>
+                                <option data-countryCode="BO" value="591">Bolivia (+591)</option>
+                                <option data-countryCode="BA" value="387">Bosnia Herzegovina (+387)</option>
+                                <option data-countryCode="BW" value="267">Botswana (+267)</option>
+                                <option data-countryCode="BR" value="55">Brazil (+55)</option>
+                                <option data-countryCode="BN" value="673">Brunei (+673)</option>
+                                <option data-countryCode="BG" value="359">Bulgaria (+359)</option>
+                                <option data-countryCode="BF" value="226">Burkina Faso (+226)</option>
+                                <option data-countryCode="BI" value="257">Burundi (+257)</option>
+                                <option data-countryCode="KH" value="855">Cambodia (+855)</option>
+                                <option data-countryCode="CM" value="237">Cameroon (+237)</option>
+                                <option data-countryCode="CA" value="1">Canada (+1)</option>
+                                <option data-countryCode="CV" value="238">Cape Verde Islands (+238)</option>
+                                <option data-countryCode="KY" value="1345">Cayman Islands (+1345)</option>
+                                <option data-countryCode="CF" value="236">Central African Republic (+236)</option>
+                                <option data-countryCode="CL" value="56">Chile (+56)</option>
+                                <option data-countryCode="CN" value="86">China (+86)</option>
+                                <option data-countryCode="CO" value="57">Colombia (+57)</option>
+                                <option data-countryCode="KM" value="269">Comoros (+269)</option>
+                                <option data-countryCode="CG" value="242">Congo (+242)</option>
+                                <option data-countryCode="CK" value="682">Cook Islands (+682)</option>
+                                <option data-countryCode="CR" value="506">Costa Rica (+506)</option>
+                                <option data-countryCode="HR" value="385">Croatia (+385)</option>
+                                <option data-countryCode="CU" value="53">Cuba (+53)</option>
+                                <option data-countryCode="CY" value="90392">Cyprus North (+90392)</option>
+                                <option data-countryCode="CY" value="357">Cyprus South (+357)</option>
+                                <option data-countryCode="CZ" value="42">Czech Republic (+42)</option>
+                                <option data-countryCode="DK" value="45">Denmark (+45)</option>
+                                <option data-countryCode="DJ" value="253">Djibouti (+253)</option>
+                                <option data-countryCode="DM" value="1809">Dominica (+1809)</option>
+                                <option data-countryCode="DO" value="1809">Dominican Republic (+1809)</option>
+                                <option data-countryCode="EC" value="593">Ecuador (+593)</option>
+                                <option data-countryCode="EG" value="20">Egypt (+20)</option>
+                                <option data-countryCode="SV" value="503">El Salvador (+503)</option>
+                                <option data-countryCode="GQ" value="240">Equatorial Guinea (+240)</option>
+                                <option data-countryCode="ER" value="291">Eritrea (+291)</option>
+                                <option data-countryCode="EE" value="372">Estonia (+372)</option>
+                                <option data-countryCode="ET" value="251">Ethiopia (+251)</option>
+                                <option data-countryCode="FK" value="500">Falkland Islands (+500)</option>
+                                <option data-countryCode="FO" value="298">Faroe Islands (+298)</option>
+                                <option data-countryCode="FJ" value="679">Fiji (+679)</option>
+                                <option data-countryCode="FI" value="358">Finland (+358)</option>
+                                <option data-countryCode="FR" value="33">France (+33)</option>
+                                <option data-countryCode="GF" value="594">French Guiana (+594)</option>
+                                <option data-countryCode="PF" value="689">French Polynesia (+689)</option>
+                                <option data-countryCode="GA" value="241">Gabon (+241)</option>
+                                <option data-countryCode="GM" value="220">Gambia (+220)</option>
+                                <option data-countryCode="GE" value="7880">Georgia (+7880)</option>
+                                <option data-countryCode="DE" value="49">Germany (+49)</option>
+                                <option data-countryCode="GH" value="233">Ghana (+233)</option>
+                                <option data-countryCode="GI" value="350">Gibraltar (+350)</option>
+                                <option data-countryCode="GR" value="30">Greece (+30)</option>
+                                <option data-countryCode="GL" value="299">Greenland (+299)</option>
+                                <option data-countryCode="GD" value="1473">Grenada (+1473)</option>
+                                <option data-countryCode="GP" value="590">Guadeloupe (+590)</option>
+                                <option data-countryCode="GU" value="671">Guam (+671)</option>
+                                <option data-countryCode="GT" value="502">Guatemala (+502)</option>
+                                <option data-countryCode="GN" value="224">Guinea (+224)</option>
+                                <option data-countryCode="GW" value="245">Guinea - Bissau (+245)</option>
+                                <option data-countryCode="GY" value="592">Guyana (+592)</option>
+                                <option data-countryCode="HT" value="509">Haiti (+509)</option>
+                                <option data-countryCode="HN" value="504">Honduras (+504)</option>
+                                <option data-countryCode="HK" value="852">Hong Kong (+852)</option>
+                                <option data-countryCode="HU" value="36">Hungary (+36)</option>
+                                <option data-countryCode="IS" value="354">Iceland (+354)</option>
+                                <option data-countryCode="IN" value="91">India (+91)</option>
+                                <option data-countryCode="ID" value="62">Indonesia (+62)</option>
+                                <option data-countryCode="IR" value="98">Iran (+98)</option>
+                                <option data-countryCode="IQ" value="964">Iraq (+964)</option>
+                                <option data-countryCode="IE" value="353">Ireland (+353)</option>
+                                <option data-countryCode="IL" value="972">Israel (+972)</option>
+                                <option data-countryCode="IT" value="39">Italy (+39)</option>
+                                <option data-countryCode="JM" value="1876">Jamaica (+1876)</option>
+                                <option data-countryCode="JP" value="81">Japan (+81)</option>
+                                <option data-countryCode="JO" value="962">Jordan (+962)</option>
+                                <option data-countryCode="KZ" value="7">Kazakhstan (+7)</option>
+                                <option data-countryCode="KE" value="254">Kenya (+254)</option>
+                                <option data-countryCode="KI" value="686">Kiribati (+686)</option>
+                                <option data-countryCode="KP" value="850">Korea North (+850)</option>
+                                <option data-countryCode="KR" value="82">Korea South (+82)</option>
+                                <option data-countryCode="KW" value="965">Kuwait (+965)</option>
+                                <option data-countryCode="KG" value="996">Kyrgyzstan (+996)</option>
+                                <option data-countryCode="LA" value="856">Laos (+856)</option>
+                                <option data-countryCode="LV" value="371">Latvia (+371)</option>
+                                <option data-countryCode="LB" value="961">Lebanon (+961)</option>
+                                <option data-countryCode="LS" value="266">Lesotho (+266)</option>
+                                <option data-countryCode="LR" value="231">Liberia (+231)</option>
+                                <option data-countryCode="LY" value="218">Libya (+218)</option>
+                                <option data-countryCode="LI" value="417">Liechtenstein (+417)</option>
+                                <option data-countryCode="LT" value="370">Lithuania (+370)</option>
+                                <option data-countryCode="LU" value="352">Luxembourg (+352)</option>
+                                <option data-countryCode="MO" value="853">Macao (+853)</option>
+                                <option data-countryCode="MK" value="389">Macedonia (+389)</option>
+                                <option data-countryCode="MG" value="261">Madagascar (+261)</option>
+                                <option data-countryCode="MW" value="265">Malawi (+265)</option>
+                                <option data-countryCode="MY" value="60">Malaysia (+60)</option>
+                                <option data-countryCode="MV" value="960">Maldives (+960)</option>
+                                <option data-countryCode="ML" value="223">Mali (+223)</option>
+                                <option data-countryCode="MT" value="356">Malta (+356)</option>
+                                <option data-countryCode="MH" value="692">Marshall Islands (+692)</option>
+                                <option data-countryCode="MQ" value="596">Martinique (+596)</option>
+                                <option data-countryCode="MR" value="222">Mauritania (+222)</option>
+                                <option data-countryCode="YT" value="269">Mayotte (+269)</option>
+                                <option data-countryCode="MX" value="52">Mexico (+52)</option>
+                                <option data-countryCode="FM" value="691">Micronesia (+691)</option>
+                                <option data-countryCode="MD" value="373">Moldova (+373)</option>
+                                <option data-countryCode="MC" value="377">Monaco (+377)</option>
+                                <option data-countryCode="MN" value="976">Mongolia (+976)</option>
+                                <option data-countryCode="MS" value="1664">Montserrat (+1664)</option>
+                                <option data-countryCode="MA" value="212">Morocco (+212)</option>
+                                <option data-countryCode="MZ" value="258">Mozambique (+258)</option>
+                                <option data-countryCode="MN" value="95">Myanmar (+95)</option>
+                                <option data-countryCode="NA" value="264">Namibia (+264)</option>
+                                <option data-countryCode="NR" value="674">Nauru (+674)</option>
+                                <option data-countryCode="NP" value="977">Nepal (+977)</option>
+                                <option data-countryCode="NL" value="31">Netherlands (+31)</option>
+                                <option data-countryCode="NC" value="687">New Caledonia (+687)</option>
+                                <option data-countryCode="NZ" value="64">New Zealand (+64)</option>
+                                <option data-countryCode="NI" value="505">Nicaragua (+505)</option>
+                                <option data-countryCode="NE" value="227">Niger (+227)</option>
+                                <option data-countryCode="NG" value="234">Nigeria (+234)</option>
+                                <option data-countryCode="NU" value="683">Niue (+683)</option>
+                                <option data-countryCode="NF" value="672">Norfolk Islands (+672)</option>
+                                <option data-countryCode="NP" value="670">Northern Marianas (+670)</option>
+                                <option data-countryCode="NO" value="47">Norway (+47)</option>
+                                <option data-countryCode="OM" value="968">Oman (+968)</option>
+                                <option data-countryCode="PW" value="680">Palau (+680)</option>
+                                <option data-countryCode="PA" value="507">Panama (+507)</option>
+                                <option data-countryCode="PG" value="675">Papua New Guinea (+675)</option>
+                                <option data-countryCode="PY" value="595">Paraguay (+595)</option>
+                                <option data-countryCode="PE" value="51">Peru (+51)</option>
+                                <option data-countryCode="PH" value="63">Philippines (+63)</option>
+                                <option data-countryCode="PL" value="48">Poland (+48)</option>
+                                <option data-countryCode="PT" value="351">Portugal (+351)</option>
+                                <option data-countryCode="PR" value="1787">Puerto Rico (+1787)</option>
+                                <option data-countryCode="QA" value="974">Qatar (+974)</option>
+                                <option data-countryCode="RE" value="262">Reunion (+262)</option>
+                                <option data-countryCode="RO" value="40">Romania (+40)</option>
+                                <option data-countryCode="RU" value="7">Russia (+7)</option>
+                                <option data-countryCode="RW" value="250">Rwanda (+250)</option>
+                                <option data-countryCode="SM" value="378">San Marino (+378)</option>
+                                <option data-countryCode="ST" value="239">Sao Tome &amp; Principe (+239)</option>
+                                <option data-countryCode="SA" value="966">Saudi Arabia (+966)</option>
+                                <option data-countryCode="SN" value="221">Senegal (+221)</option>
+                                <option data-countryCode="CS" value="381">Serbia (+381)</option>
+                                <option data-countryCode="SC" value="248">Seychelles (+248)</option>
+                                <option data-countryCode="SL" value="232">Sierra Leone (+232)</option>
+                                <option data-countryCode="SG" value="65">Singapore (+65)</option>
+                                <option data-countryCode="SK" value="421">Slovak Republic (+421)</option>
+                                <option data-countryCode="SI" value="386">Slovenia (+386)</option>
+                                <option data-countryCode="SB" value="677">Solomon Islands (+677)</option>
+                                <option data-countryCode="SO" value="252">Somalia (+252)</option>
+                                <option data-countryCode="ZA" value="27">South Africa (+27)</option>
+                                <option data-countryCode="ES" value="34">Spain (+34)</option>
+                                <option data-countryCode="LK" value="94">Sri Lanka (+94)</option>
+                                <option data-countryCode="SH" value="290">St. Helena (+290)</option>
+                                <option data-countryCode="KN" value="1869">St. Kitts (+1869)</option>
+                                <option data-countryCode="SC" value="1758">St. Lucia (+1758)</option>
+                                <option data-countryCode="SD" value="249">Sudan (+249)</option>
+                                <option data-countryCode="SR" value="597">Suriname (+597)</option>
+                                <option data-countryCode="SZ" value="268">Swaziland (+268)</option>
+                                <option data-countryCode="SE" value="46">Sweden (+46)</option>
+                                <option data-countryCode="CH" value="41">Switzerland (+41)</option>
+                                <option data-countryCode="SI" value="963">Syria (+963)</option>
+                                <option data-countryCode="TW" value="886">Taiwan (+886)</option>
+                                <option data-countryCode="TJ" value="7">Tajikstan (+7)</option>
+                                <option data-countryCode="TH" value="66">Thailand (+66)</option>
+                                <option data-countryCode="TG" value="228">Togo (+228)</option>
+                                <option data-countryCode="TO" value="676">Tonga (+676)</option>
+                                <option data-countryCode="TT" value="1868">Trinidad &amp; Tobago (+1868)</option>
+                                <option data-countryCode="TN" value="216">Tunisia (+216)</option>
+                                <option data-countryCode="TR" value="90">Turkey (+90)</option>
+                                <option data-countryCode="TM" value="7">Turkmenistan (+7)</option>
+                                <option data-countryCode="TM" value="993">Turkmenistan (+993)</option>
+                                <option data-countryCode="TC" value="1649">Turks &amp; Caicos Islands (+1649)</option>
+                                <option data-countryCode="TV" value="688">Tuvalu (+688)</option>
+                                <option data-countryCode="UG" value="256">Uganda (+256)</option>
+                                <!-- <option data-countryCode="GB" value="44">UK (+44)</option> -->
+                                <option data-countryCode="UA" value="380">Ukraine (+380)</option>
+                                <option data-countryCode="AE" value="971">United Arab Emirates (+971)</option>
+                                <option data-countryCode="UY" value="598">Uruguay (+598)</option>
+                                <!-- <option data-countryCode="US" value="1">USA (+1)</option> -->
+                                <option data-countryCode="UZ" value="7">Uzbekistan (+7)</option>
+                                <option data-countryCode="VU" value="678">Vanuatu (+678)</option>
+                                <option data-countryCode="VA" value="379">Vatican City (+379)</option>
+                                <option data-countryCode="VE" value="58">Venezuela (+58)</option>
+                                <option data-countryCode="VN" value="84">Vietnam (+84)</option>
+                                <option data-countryCode="VG" value="84">Virgin Islands - British (+1284)</option>
+                                <option data-countryCode="VI" value="84">Virgin Islands - US (+1340)</option>
+                                <option data-countryCode="WF" value="681">Wallis &amp; Futuna (+681)</option>
+                                <option data-countryCode="YE" value="969">Yemen (North)(+969)</option>
+                                <option data-countryCode="YE" value="967">Yemen (South)(+967)</option>
+                                <option data-countryCode="ZM" value="260">Zambia (+260)</option>
+                                <option data-countryCode="ZW" value="263">Zimbabwe (+263)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                   </div>
+                   <div class="uk-width-3-4@s">
+                       <div class="uk-margin">
+                           <label class="uk-form-label" for="form-stacked-text">Mobile Number</label>
+                           <div class="uk-form-controls">
+                               <input class="uk-input num-only" id="form-stacked-text" type="text" name="mobile_phone_number_c" value="{{customer.mobile_phone_number}}" placeholder="Your Phone Number" />
+                           </div>
+                       </div>
+                   </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-stacked-text">Email Address</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-stacked-text" type="text" name="email_address_c" value="{{customer.email}}" placeholder="Email address" />
+                    </div>
+                </div>
+                <input class="uk-button uk-width-1-1 uk-button-large" style="margin-top: 20px; background: #2ecc71; color: #FFF;" type="submit" name="submit" value="Save Contact Details"/>
+                </div>
+            </form>
+            </li>
+            <li id="cp">
+                 <form class="uk-form-stacked uk-margin-large" method="post" action="/profile/edit">
+                <div style="margin-top: 60px">
+                <input type="hidden" name="which_form" value="5"/ />
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-text">Your Old Password</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-horizontal-text" type="password" name="opmodel" placeholder="{{customer.password}}" />
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-text">Your New Password</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-horizontal-text" type="password" name="password1" placeholder="{{customer.password}}" />
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-text">Re-enter New Password</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="form-horizontal-text" type="password" name="password2" placeholder="{{customer.password}}" />
+                    </div>
+                </div>
+                <input class="uk-button uk-width-1-1 uk-button-large" style="margin-top: 20px; background: #2ecc71; color: #FFF;" type="submit" name="submit" value="Update Password"/>
+            </div>
+            </form>
+            </li>
+        </ul>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="uk-clearfix">
+      <div class="uk-float-right">
+          <ul class="uk-breadcrumb" style="margin-bottom: 0px; position: relative; left: -50px;">
+            <li><a href="https://skillion.com.au/">Website</a></li>
+            <li><a href="/tos">Terms of Service</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="uk-float-left">
+          Skillion Inc.
+      </div>
+  </div>
+</footer>
+</body>
+<script>
+$(".alpha-only").on("keydown", function(event){
+    // Allow controls such as backspace
+    var arr = [9,8,16,17,20,35,32,36,37,38,39,40,45,46];
+
+    // Allow letters
+    for(var i = 65; i <= 90; i++){
+    arr.push(i);
+    }
+
+    // Prevent default if not in array
+    if(jQuery.inArray(event.which, arr) === -1){
+    event.preventDefault();
+    }
+});
+$(".alpha-dot-only").on("keydown", function(event){
+    // Allow controls such as backspace
+    var arr = [9,8,16,17,20,35,32,36,37,38,39,40,45,46, 190];
+
+    // Allow letters
+    for(var i = 65; i <= 90; i++){
+    arr.push(i);
+    }
+
+    // Prevent default if not in array
+    if(jQuery.inArray(event.which, arr) === -1){
+    event.preventDefault();
+    }
+});
+$(".num-only").on("keydown", function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+</script>
+</html>

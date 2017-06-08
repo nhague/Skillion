@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="offset-body">
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/css/uikit.min.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/rangeslider.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/ui.min.js"></script>
+    <script type="text/javascript" src="/static/js/json2.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+    <title>Pay using Stripe</title>
+</head>
+<body id="orderID" data-oi="">
+    <div class="content" uk-height-viewport="offset-bottom: 6">
+    <div id="cover"></div>
+    <nav class="uk-navbar">
+        <div class="uk-navbar-flip">
+            <ul class="uk-navbar-nav">
+                <li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+                <li><a href="/profile">Profile</a></li>
+				<li><a href="/purchases">My Skillions</a></li>
+				<li><a href="/payments">My Payments</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="card-holder">
+        <div class="uk-card uk-card-default uk-card-body">
+            <h2 class="title">Pay <span class="currency" style="color: #2ecc71">{{currency}}</span> <span style="color: #2ecc71" class="amount">{{amount}}</span> via Stripe</h2>
+            <form action="/outright/pay/{{token}}" method="post" id="payment-form">
+              <div class="form-row">
+                <label for="card-element" style="margin-bottom: 15px;">
+                  Credit or debit card
+                </label>
+                <div id="card-element">
+                  <!-- a Stripe Element will be inserted here. -->
+                </div>
+
+                <!-- Used to display Element errors -->
+                <div id="card-errors"></div>
+              </div>
+              <button class="submit-strip-btn">Make Payment!</button>
+            </form>
+        </div>
+</div>
+
+    <script>
+        var stripe = Stripe('{{keys}}');
+        var elements = stripe.elements();
+        var all_info = {"Line_Items" : Cookies.getJSON()};
+        $(document).ready(function(){
+            data = {
+                    'product_token': "{{product_token}}",
+                    'is_fully_paid' : all_info["Line_Items"]["PurchaseDetails"]["is_fully_paid"],
+                    'token': "{{token}}",
+                    'amount_total': all_info["Line_Items"]["PurchaseDetails"]["amount_total"],
+                    'payment_for': all_info["Line_Items"]["PurchaseDetails"]["amount_paid"],
+                    'currency': all_info["Line_Items"]["PurchaseDetails"]["amount_currency"],
+                    'name': all_info["Line_Items"]["PurchaseDetails"]["description"],
+                    'due_date': all_info["Line_Items"]["PurchaseDetails"]["date_due"],
+                    'no_bikes': all_info["Line_Items"]["PurchaseDetails"]["purchase_qty"],
+                    'is_layby': 'no'
+                }
+                $('.currency').text(String(all_info['Line_Items']['PurchaseDetails']['amount_currency']));
+                $('.amount').text(String(all_info['Line_Items']['PurchaseDetails']['amount_remaining']));
+            $.post('/zip',data,function(response,status){
+                var order_lines = { "order_line": []};
+                var order_id = String(response);
+                for (i = 0; i < parseInt(all_info['Line_Items']['PurchaseDetails']['purchase_qty']); i++) {
+                    order_lines["order_line"][i] = {
+                          "product_id": "{{product_token}}",
+                    	  "amount_total": parseInt(all_info['Line_Items']['PurchaseDetails']['amount_total'])/(parseInt(all_info['Line_Items']['PurchaseDetails']['purchase_qty'])),
+                    	  "amount_remaining": parseInt(all_info['Line_Items']['PurchaseDetails']['amount_total'])/(parseInt(all_info['Line_Items']['PurchaseDetails']['purchase_qty'])),
+                    	  "amount_postage":0,
+                    	  "amount_paid": 0,
+                    	  "amount_currency": all_info['Line_Items']['PurchaseDetails']['amount_currency'],
+                    	  "is_pickup": true,
+                    	  "is_fully_paid": false,
+                    	  "is_postage_paid": false,
+                    	  "description": all_info['Line_Items']['PurchaseDetails']['description'],
+                    	  "deliver_to_address": "PICKUP" }
+                    }
+                order_lines['order_id'] = order_id;
+                sendLineItems(JSON.stringify(order_lines));
+                });
+            });
+
+        var sendLineItems = function(str_obj){
+            $.post('/orderlines', {'key': str_obj}, function(resp, stat){
+                $("#orderID").attr("data-oi", JSON.parse(resp)['order']['id'])
+                $('#cover').fadeOut(1000);
+            })
+        }
+
+        if (all_info["Line_Items"].length > 1){
+            $('.currency').text(all_info["Line_Items"]["PurchaseDetails"]["amount_currency"]);
+            $('.amount').text(all_info["Line_Items"]["PurchaseDetails"]["amount_remaining"]);
+        }
+        //om styling can be passed to options when creating an Element.
+        var style = {
+          base: {
+            // Add your base input styles here. For example:
+            fontSize: '16px',
+            lineHeight: '24px'
+          }
+        };
+
+        // Create an instance of the card Element
+        var card = elements.create('card', {style: style});
+
+        // Add an instance of the card Element into the `card-element` <div>
+        card.mount('#card-element');
+        card.addEventListener('change', function(event) {
+          var displayError = document.getElementById('card-errors');
+          if (event.error) {
+            displayError.textContent = event.error.message;
+          } else {
+            displayError.textContent = '';
+          }
+        });
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+          event.preventDefault();
+
+          stripe.createToken(card).then(function(result) {
+            if (result.error) {
+              // Inform the user if there was an error
+              var errorElement = document.getElementById('card-errors');
+              errorElement.textContent = result.error.message;
+            } else {
+              // Send the token to your server
+              stripeTokenHandler(result.token);
+            }
+          });
+        });
+        function stripeTokenHandler(token) {
+          // Insert the token ID into the form so it gets submitted to the server
+          var form = document.getElementById('payment-form');
+          var hiddenInput = document.createElement('input');
+          hiddenInput.setAttribute('type', 'hidden');
+          hiddenInput.setAttribute('name', 'stripeToken');
+          hiddenInput.setAttribute('value', token.id);
+          form.appendChild(hiddenInput);
+
+          var hiddenInput = document.createElement('input');
+          hiddenInput.setAttribute('type', 'hidden');
+          hiddenInput.setAttribute('name', 'amount_bill');
+          hiddenInput.setAttribute('value', all_info["Line_Items"]["PurchaseDetails"]["amount_remaining"]);
+          form.appendChild(hiddenInput);
+          var hiddenInput = document.createElement('input');
+          hiddenInput.setAttribute('type', 'hidden');
+          hiddenInput.setAttribute('name', 'email');
+          hiddenInput.setAttribute('value', "{{user.email}}");
+          form.appendChild(hiddenInput);
+          var hiddenInput = document.createElement('input');
+          hiddenInput.setAttribute('type', 'hidden');
+          hiddenInput.setAttribute('name', 'orderid');
+          hiddenInput.setAttribute('value', $("#orderID").attr("data-oi"));
+          form.appendChild(hiddenInput);
+
+          // Submit the form
+          form.submit();
+        }
+    </script>
+</div>
+<footer class="footer">
+    <div class="uk-clearfix">
+      <div class="uk-float-right">
+          <ul class="uk-breadcrumb" style="margin-bottom: 0px; position: relative; left: -50px;">
+            <li><a href="https://skillion.com.au/">Website</a></li>
+            <li><a href="/tos">Terms of Service</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="uk-float-left">
+          Skillion Inc.
+      </div>
+  </div>
+</footer>
+</body>
+</html>

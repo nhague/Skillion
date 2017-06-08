@@ -1,0 +1,302 @@
+<html class="offset-body">
+	<head>
+		<link rel="stylesheet" type="text/css" href="/static/css/uikit.min.css"></script>
+		<link rel="stylesheet" type="text/css" href="/static/css/rangeslider.css"></script>
+	    <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+		<link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+		<script type="text/javascript" src="/static/js/cookie.js"></script>
+		<script type="text/javascript" src="/static/js/json2.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+		  <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+		<title>Initiate Layby Sale</title>
+	</head>
+	<body>
+	<div class="content" uk-height-viewport="offset-bottom: 5">
+	<nav class="uk-navbar">
+		<div class="uk-navbar-flip">
+			<ul class="uk-navbar-nav">
+				<li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+				{% if not guestmode %}
+				<li><a href="/profile">Profile</a></li>
+				<li><a href="/purchases">My Skillions</a></li>
+				<li><a href="/payments">My Payments</a></li>
+				{% endif %}
+			</ul>
+		</div>
+		<div class="uk-navbar-right">
+			<ul class="uk-navbar-nav">
+				<li>
+					<a class="uk-button uk-button-primary nav_button" id="submit">Next Step <span uk-icon="icon: chevron-right"></span></a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="box-holder">
+		<div class="uk-card uk-card-default uk-card-body" style="margin-top: 50px;">
+		<div class="total-box" id="{{token}}">
+			<h1><span class="currency">{{product['amount_currency']}}</span> <div id="amount">{{product['amount_total']}}</div></h1>
+			<h4>Total Payable Amount</h4>
+		</div>
+		<div class="number-selector">
+			<h4>How many {{product['name']}} bikes would you like to purchase?<span class="amount-text"><span>1</span> Bike(s)</span></h4>
+			<input type="range" id="range1" min="1" max="10" step="1" value="1" data-rangeslider/>
+		</div>
+	</div>
+	</div>
+
+	<div class="part-payments" data-invisible="yes" style="margin-bottom: 200px;">
+		<div class="uk-card uk-card-default uk-card-body">
+			<div class="payment-frequency">
+				<h4>How do you want to make your payments?<span><select class="select-fl fl-paymentfrequency"><option value="0" id="hide1">Choose</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></span></h4>
+				<h6 class="max-date-field">(You have until <strong>{{product['maxdate']}}</strong> to complete all payments)</h6>
+			</div>
+
+			<div class="timeframe weekly_timeframe" style="display: none;">
+				<h4>Spread my payments across…
+					<span>
+					<select class="select-fl fl-timeframe weeks_tf">
+						<option value="0" id="hide2">Choose</option>
+						{% for n in range(product['partpayment_weeks']|int) %}
+						{% if n == 0 %}
+						<option value="{{loop.index}}">{{loop.index}} week</option>
+						{% else %}
+						<option value="{{loop.index}}">{{loop.index}} weeks</option>
+						{% endif %}
+						{% endfor %}
+					</select>
+					</span>
+				</h4>
+			</div>
+
+			<div class="timeframe monthly_timeframe" style="display: none;">
+				<h4>Spread my payments across…
+					<span>
+					<select class="select-fl fl-timeframe months_tf">
+						<option value="0" id="hide2">Choose</option>
+						{% for n in range(product['partpayment_months']|int) %}
+						{% if n == 0 %}
+						<option value="{{loop.index}}">{{loop.index}} month</option>
+						{% else %}
+						<option value="{{loop.index}}">{{loop.index}} months</option>
+						{% endif %}
+						{% endfor %}
+					</select>
+					</span>
+				</h4>
+			</div>
+
+			<div class="timeframe show2" style="display: none;">
+				<h4 style="padding: 0px;">Each <span class="display-freq">Weekly</span> Payment — <span style="float: right; padding: 8px;" class="epp"><div id="chide1" style="display: inline-block">{{product['amount_currency']}}</div><span></span></span></h4>
+				<h4 style="padding: 20px 0px;">Final Payment — <span style="float: right; padding: 8px;" class="fpp">{{product['amount_currency']}}<span></span></span></h4>
+			</div>
+
+			<div class="initial-pay-selector show2" style="display:none;">
+				<h4>Your payable deposit today —<span style="float: right; padding: 8px;" class="amount-payable-part">AUD <span class="amount_pay_now">{{product['amount_minpayment']}}</span></span></h4>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/js/rangeslider.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		updateSchedule(({{product['amount_total']}} * $('#range1').val()), {{product['amount_minpayment']}}, 1);
+		for (var key in Cookies.get()) {
+		    var value = Cookies.get()[key];
+		    Cookies.remove(key);
+		}
+		console.log(Cookies.getJSON());
+	});
+
+	var updateSchedule = function(amount, deposit, number){
+		data = {
+			"amount_total": parseInt(amount),
+			"amount_deposit": parseInt(deposit),
+			"nbr_of_payments": parseInt(number)
+		};
+		$.post('/api/v1/schedule',data,function(response,status){
+			if(parseInt(JSON.parse(response)['amount_partpayment']) == 0){
+				$('#chide1').css('opacity', 0);
+				$('.epp span').text("Not Applicable");
+			} else {
+				$('#chide1').css('opacity', 1);
+				$('.epp span').text(JSON.parse(response)['amount_partpayment']);
+			}
+			$('.fpp span').text(JSON.parse(response)['amount_finalpayment']);
+		});
+	};
+
+
+	{% if product['is_min_pay_per_txn'] == True %}
+	$('#range1').rangeslider({
+		polyfill: false,
+		rangeClass: 'rangeslider',
+		disabledClass: 'rangeslider--disabled',
+		horizontalClass: 'rangeslider--horizontal',
+		verticalClass: 'rangeslider--vertical',
+		fillClass: 'rangeslider__fill',
+		handleClass: 'rangeslider__handle',
+		onInit: function() {},
+		onSlide: function(position, value) {
+			$('#amount').text(String({{product['amount_total']}} * value));
+			$('.amount-text span').text(value);
+            $('.amount_pay_now').text(parseFloat({{product['amount_minpayment']}}) * value)
+		},
+		onSlideEnd: function(position, value) {
+			if($('.fl-paymentfrequency').val() == "Weekly"){
+				var numT = $('.weeks_tf').val()
+			} else {
+				var numT = $('.months_tf').val()
+			}
+			updateSchedule(({{product['amount_total']}} * $('#range1').val()), parseInt($('.amount_pay_now').text()), numT);
+		}
+	});
+	{% else %}
+	$('#range1').rangeslider({
+		polyfill: false,
+		rangeClass: 'rangeslider',
+		disabledClass: 'rangeslider--disabled',
+		horizontalClass: 'rangeslider--horizontal',
+		verticalClass: 'rangeslider--vertical',
+		fillClass: 'rangeslider__fill',
+		handleClass: 'rangeslider__handle',
+		onInit: function() {},
+		onSlide: function(position, value) {
+			$('#amount').text(String({{product['amount_total']}} * value));
+			$('.amount-text span').text(value);
+			$('.amount_pay_now').text(parseFloat({{product['amount_minpayment']}}) * value);
+		},
+		onSlideEnd: function(position, value) {
+			if($('.fl-paymentfrequency').val() == "Weekly"){
+				var numT = $('.weeks_tf').val()
+			} else {
+				var numT = $('.months_tf').val()
+			}
+			updateSchedule(({{product['amount_total']}} * $('#range1').val()), parseInt($('.amount_pay_now').text()), numT);
+		}
+	});
+	{% endif %}
+
+	$( ".fl-paymentfrequency" ).change(function() {
+		$('#hide1').css('display', 'none');
+		$('.display-freq').text($(this).val());
+		if($('.fl-paymentfrequency').val() == "weekly"){
+			var numT = $('.weeks_tf').val()
+		} else {
+			var numT = $('.months_tf').val()
+		}
+		if(parseInt(numT) != 0){
+			updateSchedule(({{product['amount_total']}} * $('#range1').val()), parseInt($('.amount_pay_now').text()), numT);
+		}
+	});
+
+	$( ".fl-timeframe" ).change(function() {
+		$('#hide2').css('display', 'none');
+		$('.show2').css('display', 'block');
+		if($('.fl-paymentfrequency').val() == "weekly"){
+			var numT = $('.weeks_tf').val()
+		} else {
+			var numT = $('.months_tf').val()
+		}
+		console.log(numT);
+		updateSchedule(({{product['amount_total']}} * $('#range1').val()), parseInt($('.amount_pay_now').text()), numT);
+	});
+
+	{% if not guestmode %}
+	$('#submit').click(function(){
+		var min_pay = parseInt($('.amount_pay_now').text());
+		{% if product['is_min_pay_per_txn'] == True %}
+		var min_per_txn = true;
+		{% else %}
+		var min_per_txn = false;
+		{% endif %}
+		if($('.fl-paymentfrequency').val() == "weekly"){
+			data = {'token': "{{token}}", 'name': "{{product['name']}}", 'total_amount' : $('#range1').val() * parseFloat({{product['amount_total']}}),
+			'no_bikes': $('#range1').val(), 'part_payment': 'yes',
+			'currency': $('.currency').text(), 'amount_pay_now': parseInt($('.amount_pay_now').text()), 'max_date' : "{{product['maxdate']}}",
+			'payment_timeframe': $('.fl-paymentfrequency').val(), 'duration': $('.weeks_tf').val(), 'cost_per_item': parseFloat({{product['amount_total']}}), 'min_per_txn': min_per_txn, 'min_pay': min_pay,
+			'schedule_payment': {
+				"amount_finalpayment": $('.fpp span').text(),
+				"amount_partpayment": $('.epp span').text(),
+				"nbr_of_payments": $('.weeks_tf').val(),
+				"making_weekly_payment":true }}
+
+		} else {
+			data = {'token': "{{token}}", 'name': "{{product['name']}}", 'total_amount' : $('#range1').val() * parseFloat({{product['amount_total']}}),
+			'no_bikes': $('#range1').val(), 'part_payment': 'yes',
+			'currency': $('.currency').text(), 'amount_pay_now': parseInt($('.amount_pay_now').text()), 'max_date' : "{{product['maxdate']}}",
+			'payment_timeframe': $('.fl-paymentfrequency').val(), 'duration': $('.months_tf').val(), 'cost_per_item': parseFloat({{product['amount_total']}}), 'min_per_txn': min_per_txn, 'min_pay': min_pay,
+			'schedule_payment': {
+				"amount_finalpayment": $('.fpp span').text(),
+				"amount_partpayment": $('.epp span').text(),
+				"nbr_of_payments": $('.months_tf').val(),
+				"making_weekly_payment":false }}
+		};
+		$.post('/layby/buy/{{token}}',data,function(response,status){
+			var new_Address = "/layby/delivery/" + "{{token}}";
+			window.location.assign(new_Address);
+		});
+	});
+	{% else %}
+	$('#submit').click(function(){
+		var min_pay = parseInt($('.amount_pay_now').text());
+		{% if product['is_min_pay_per_txn'] == True %}
+		var min_per_txn = true;
+		{% else %}
+		var min_per_txn = false;
+		{% endif %}
+		if($('.fl-paymentfrequency').val() == "weekly"){
+			nData = {'token': "{{token}}", 'name': "{{product['name']}}", 'total_amount' : $('#range1').val() * parseFloat({{product['amount_total']}}),
+			'no_bikes': $('#range1').val(), 'part_payment': 'yes',
+			'currency': $('.currency').text(), 'amount_pay_now': parseInt($('.amount_pay_now').text()), 'max_date' : "{{product['maxdate']}}",
+			'payment_timeframe': $('.fl-paymentfrequency').val(), 'duration': $('.weeks_tf').val(), 'cost_per_item': parseFloat({{product['amount_total']}}), 'min_per_txn': min_per_txn, 'min_pay': min_pay,
+			'schedule_payment': {
+				"amount_finalpayment": $('.fpp span').text(),
+				"amount_partpayment": $('.epp span').text(),
+				"nbr_of_payments": $('.weeks_tf').val(),
+				"making_weekly_payment":true }}
+		} else {
+			nData = {'token': "{{token}}", 'name': "{{product['name']}}", 'total_amount' : $('#range1').val() * parseFloat({{product['amount_total']}}),
+			'no_bikes': $('#range1').val(), 'part_payment': 'yes',
+			'currency': $('.currency').text(), 'amount_pay_now': parseInt($('.amount_pay_now').text()), 'max_date' : "{{product['maxdate']}}",
+			'payment_timeframe': $('.fl-paymentfrequency').val(), 'duration': $('.months_tf').val(), 'cost_per_item': parseFloat({{product['amount_total']}}), 'min_per_txn': min_per_txn, 'min_pay': min_pay,
+			'schedule_payment': {
+				"amount_finalpayment": $('.fpp span').text(),
+				"amount_partpayment": $('.epp span').text(),
+				"nbr_of_payments": $('.months_tf').val(),
+				"making_weekly_payment":false }}
+		};
+		Cookies.set("data", nData);
+		Cookies.set("paymentType", "layby");
+		Cookies.set("paymentToken", "{{token}}");
+		window.location.assign("/guest/signup");
+	});
+	{% endif %}
+
+	$('.fl-paymentfrequency').on('change', function() {
+	  if(this.value == "weekly"){
+		  $('.weekly_timeframe').css('display', 'block');
+		  $('.monthly_timeframe').css('display', 'none');
+	  } else{
+		  $('.weekly_timeframe').css('display', 'none');
+		  $('.monthly_timeframe').css('display', 'block');
+	  };
+  	});
+
+	</script>
+	</div>
+	<footer class="footer">
+		<div class="uk-clearfix">
+		  <div class="uk-float-right">
+			  <ul class="uk-breadcrumb" style="margin-bottom: 0px; position: relative; left: -50px;">
+				<li><a href="https://skillion.com.au/">Website</a></li>
+				<li><a href="/tos">Terms of Service</a></li>
+				<li><a href="/privacy">Privacy Policy</a></li>
+			</ul>
+		  </div>
+		  <div class="uk-float-left">
+			  Skillion Inc.
+		  </div>
+	  </div>
+	</footer>
+	</body>
+</html>

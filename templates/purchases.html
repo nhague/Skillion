@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html class="offset-body">
+<head>
+  <meta charset="UTF-8">
+  <title>Purchases</title>
+  <link rel="stylesheet" type="text/css" href="https://getuikit.com/assets/uikit/dist/css/uikit.css?nc=2473"></script>
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css"></script>
+  <link rel="stylesheet" type="text/css" href="/static/css/theme.css"></script>
+  <script type="text/javascript" src="/static/js/cookie.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <!-- bxSlider Javascript file -->
+  <script src="/static/slider/slider.js"></script>
+  <!-- bxSlider CSS file -->
+  <link href="/static/slider/slider.css" rel="stylesheet" />
+  <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit.js?nc=2473"></script>
+  <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit-icons.js?nc=2473"></script>
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+</head>
+<body>
+    <div class="content" uk-height-viewport="offset-bottom: 6">
+    <nav class="uk-navbar" style="background: #EEEEEE">
+        <div class="uk-navbar-flip">
+            <ul class="uk-navbar-nav">
+                <li><a href="https://skillion.com.au" class="top-logo">Skillion</a></li>
+                <li><a href="/profile">Back to Dashboard</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                {% if user %}
+                <li><a href="/profile/edit">{{user['name']}}</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="table-holder">
+        <div class="uk-card uk-card-default uk-card-body">
+            <div style="float: right;">
+                <a href="/profile" uk-icon="icon: close"></a>
+            </div>
+            <h2 class="uk-card-title" style="margin: 0px; font-weight: 600;">All Your Purchases</h2>
+            <table class="uk-table uk-table-hover">
+                <thead style="border-top: 1px #DDD solid; border-bottom: 1px #DDD solid;">
+                    <tr>
+                        <th>Date</th>
+                        <th>Seller</th>
+                        <th>Transaction #</th>
+                        <th>Cost</th>
+                        <th>Remaining Payments</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for purchase in purchases %}
+                    <tr class="purchaseInfo" data-number="{{loop.index}}" style="cursor: pointer; border-bottom: 1px #000 solid; border-top: 1px #000 solid;" >
+                        <td>{{purchase.purchase_date}}</td>
+                        <td>{{purchase.seller_name}}</td>
+                        <td>{{purchase.purchase_ident}}</td>
+                        <td>{{purchase.ccy}} {{purchase.amount_total}}</td>
+                        {% if purchase.amount_outstanding == 0 %}
+                        <td>
+                            <strong style="color: #008D14;">Paid in Full</strong>
+                        </td>
+                        {% else %}
+                        <td>{{purchase.ccy}} {{purchase.amount_outstanding}}</td>
+                        {% endif %}
+                        <td>
+                            <button class="uk-button uk-button-primary">See More</button>
+                        </td>
+                    </tr>
+                    {% for future_payment in purchase.schedule_payment|sort(attribute='days_due_in') %}
+                    {% if future_payment.purchase_id != 0 %}
+                    <tr id="scheduledpayment" {% if future_payment.when_due[1] == "~" %}style="background: RGBA(241, 71, 74, 0.2)"{% endif %}>
+                        <td>{{future_payment.date_due}}
+                            {% if future_payment.when_due[1] == "~" %}
+                            <strong style="color: #e74c3c">{{future_payment.when_due}}</strong>
+                            {% else %}
+                            <strong style="color: #1DA1F2">{{future_payment.when_due}}</strong>
+                            {% endif %}
+                        </td>
+                        <td>{{future_payment.seller_name}}</td>
+                        <td>{{future_payment.purchase_ident}}</td>
+                        <td>{{future_payment.ccy}} {{future_payment.amount}}</td>
+                        <td>
+                            --
+                        </td>
+                        <td><a class="uk-button uk-button-secondary assignppbutton" data-number="{{future_payment.id}}" style="background: #2ecc71;">Pay  Now</a></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+   </div>
+
+
+
+   {% for purchase in purchases %}
+   {% for future_payment in purchase.schedule_payment %}
+   {% if future_payment.id != 0 %}
+   <div id="assignPP{{future_payment.id}}" class="modal" data-spid="{{future_payment.id}}" data-number="{{loop.index}}">
+     <!-- Modal content -->
+     <div class="modal-content" style="max-width: 450px;">
+        <span class="closepp" data-number="{{future_payment.id}}" style="position: relative; top: -5px;">&times;</span>
+        <h2 class="uk-card-title" style="margin: 0px; font-weight: 600;">How would you like to pay for this?</h2>
+        <h4 style="font-size: 14px; margin: 5px 0px; margin-bottom: 5px;">Total Amount Due —  <span style="float: right; font-weight: 600; position: relative; right: -15px;">{{purchase.ccy}} <span>{{future_payment.amount}}</span></span></h4>
+        <h4 style="font-size: 14px; margin: 0px; margin-bottom: 5px;">Total Amount Assigned — <span style="float: right; font-weight: 600; color: #008D14;">{{purchase.ccy}} <span class="{{purchase.id}}_Made_{{future_payment.id}}">0</span></span></h4>
+        <h4 style="font-size: 14px; margin: 0px; margin-bottom: 5px;">Total Amount Unassigned —  <span class="rem-color" style="float: right; font-weight: 600; color: #F1474A;"><span class="rempay">{{purchase.ccy}}</span> <span class="{{purchase.id}}_Rem_{{future_payment.id}}">{{future_payment.amount}}</span></span></h4>
+        <table class="uk-table uk-table-small uk-table-divider">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th style="position: relative; bottom: -5px;">Assigned Amount ({{purchase.ccy}}) <a class="uk-button uk-button-primary uk-button-small splitpayment" data-total="{{future_payment.amount}}" data-purchaseid="{{purchase.id}}" data-spid="{{future_payment.id}}" data-denom="{{purchase.lineitems|length}}" style="padding: 0px 5px; margin: 0px; font-size: 10px; line-height: 20px; float: right; background: #FFF; color: #1E87F0; border: 1px #1E87F0 solid;">Split Evenly</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in purchase.lineitems%}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{item.product_name}}</td>
+                    <td><input class="uk-input numbers_only runTotal {{purchase.id}}_Input_{{future_payment.id}}" data-lineid="{{item.id}}" data-total="{{future_payment.amount}}" data-purchaseid="{{purchase.id}}" data-spid="{{future_payment.id}}" type="text" placeholder="Amount to pay..."></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a class="uk-button uk-button-primary uk-button-large uk-width-1-1 payPP" data-spid="{{future_payment.id}}" data-total="{{future_payment.amount}}" data-purchaseid="{{purchase.id}}">Pay Now</a>
+     </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+   <div id="purchaseInfobox{{loop.index}}" class="modal" data-number="{{loop.index}}">
+     <!-- Modal content -->
+     <div class="modal-content" style="max-width: 950px;">
+        <div class="uk-child-width-expand@s" uk-grid>
+            <div>
+                <div id="sliderModal">
+                  <ul class="bxslider{{loop.index}}">
+                    {% for item in purchase.lineitems %}
+                    <li>
+                        <img src="{{item.image_url}}"/>
+                        <div style="padding: 20px;">
+                            <div style="display: inline;">
+                            <h3 style="padding: 0px; margin: 0px;">{{item.product_name}} {{item.model}}</h3>
+                            {% if purchase.amount_outstanding == 0 %}
+                            <h5 style="padding: 0px; margin: 0px; padding-top: 15px;">Serial Number: {{item.serial_number}}</h5>
+                            <p>Battery Status: 98%</p>
+                            {% endif %}
+                            </div>
+                            {% if purchase.amount_outstanding == 0 %}
+                            <img src="/static/img/battery.png" style="display: inline; float: right; height: 100px; margin-top: -120px;"/>
+                            {% endif %}
+                        </div>
+                        {% if purchase.amount_outstanding == 0 %}
+                        <img src="/static/img/igm.png"/>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+            </div>
+            <div>
+               <span class="close" data-number="{{loop.index}}">&times;</span>
+               <div class="info-details">
+                   <table class="uk-table uk-table-hover">
+                       <h1 class="uk-title" style="font-size: 28px; font-weight: 700;">More Information</h1>
+                       <tbody>
+                           <tr>
+                               <td><strong>Seller</strong></td>
+                               <td>{{purchase.seller_name}}</td>
+                           </tr>
+                           <tr>
+                               <td><strong>Date</strong></td>
+                               <td>{{purchase.purchase_date}}</td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <strong>Payment #</strong>
+                               </td>
+                               <td>
+                                   {{purchase.purchase_ident}}
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <strong>Total Payment Due Date</strong>
+                               </td>
+                               <td>
+                                   {{purchase.date_due}}
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <strong>Next Payment Due</strong>
+                               </td>
+                               <td>
+                                   {{purchase.next_payment_due}}
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <strong><h5>Cost Breakdown</h5></strong>
+                               </td>
+                               <td>
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <strong>Sub-total</strong>
+                               </td>
+                               <td>
+                                    {{purchase.ccy}} {{purchase.amount_total - purchase.amount_tax}}
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <strong>Tax</strong>
+                               </td>
+                               <td>
+                                    {{purchase.ccy}} {{purchase.amount_tax}}
+                               </td>
+                           </tr>
+                           <tr style="border-bottom: 2px #000 solid; border-top: 2px #000 solid; background: RGBA(145, 145, 145, 0.1);">
+                               <td>
+                                   <strong style="padding: 0px; margin: 0px; text-transform: uppercase; font-weight: 600; color: #000; font-weight: 700;">Total</strong>
+                               </td>
+                               <td>
+                                   <strong style="padding: 0px; margin: 0px; text-transform: uppercase; font-weight: 600; color: #000; font-weight: 700;">{{purchase.ccy}} {{purchase.amount_total}}</strong>
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <strong>Paid</strong>
+                               </td>
+                               <td style="font-weight: 700; color: #008D14;">
+                                   {{purchase.ccy}} {{purchase.amount_paid}}
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <strong>Outstanding</strong>
+                               </td>
+                               {% if purchase.amount_outstanding == 0 %}
+                               <td style="font-weight: 700; color: #008D14;">
+                                   Paid in Full
+                               </td>
+                               {% else %}
+                               <td style="font-weight: 700; color: #e74c3c;">
+                                   {{purchase.ccy}} {{purchase.amount_outstanding}}
+                               </td>
+                               {% endif %}
+                           </tr>
+                       </tbody>
+                   </table>
+                   {% if purchase.amount_outstanding != 0 %}
+                   <a class="uk-button uk-button-primary uk-button-large uk-width-1-1" href="/pay/all/{{purchase.ccy}}/{{purchase.amount_outstanding}}/{{purchase.id}}">Pay all part payments now</a>
+                   {% endif %}
+                   <script>
+                   $('.bxslider{{loop.index}}').bxSlider({
+                       hideControlOnEnd: true,
+                       pager: false
+                   });
+                   </script>
+               </div>
+           </div>
+       </div>
+     </div>
+   </div>
+   {% endfor %}
+   <script>
+   // When the user clicks on the button, open the modal
+   $('.purchaseInfo').on('click', function(){
+       var num = $(this).attr('data-number');
+       // Get the modal
+       var name = "purchaseInfobox" + String(num)
+       var modal = document.getElementById(name);
+       modal.style.display = "block";
+   });
+
+   $('.assignppbutton').on('click', function(){
+       var num = $(this).attr('data-number');
+       // Get the modal
+       var name = "assignPP" + String(num)
+       var modal = document.getElementById(name);
+       modal.style.display = "block";
+   });
+
+   $('.closepp').on('click', function(){
+       var num = $(this).attr('data-number');
+       var name = "assignPP" + String(num)
+       var modal = document.getElementById(name);
+       modal.style.display = "none";
+   });
+
+   // When the user clicks on <span> (x), close the modal
+
+   $('.close').on('click', function(){
+       var num = $(this).attr('data-number');
+       var name = "purchaseInfobox" + String(num)
+       var modal = document.getElementById(name);
+       modal.style.display = "none";
+   });
+
+   $('.payPP').on('click', function(){
+       var schedulePaymentID = $(this).attr('data-spid');
+       var purchaseID = $(this).attr('data-purchaseid');
+       var reqTOTAL = $(this).attr('data-total');
+       var element = "." + String(purchaseID) + "_Input_" + String(schedulePaymentID);
+
+       var amountPF = 0;
+       $(element).each(function(){
+          if($(this).val().length > 0){
+              amountPF += parseInt($(this).val(),10);
+          } else {
+              $(this).val(0);
+              amountPF += parseInt($(this).val());
+          }
+        });
+       if(amountPF != reqTOTAL){
+           message = "You need to pay atleast AUD " + String(reqTOTAL) + " in total."
+           UIkit.modal.alert(message).then(function() {
+               console.log('Alert closed.')
+           });
+       } else {
+            var Line_Items = [];
+            $(element).each(function(index, elem){
+                if($(elem).val() != 0 && $(elem).val().length > 0){
+                    var dict = {"id": $(elem).attr('data-lineid'), "amount_this_payment": $(elem).val(), "is_fully_paid": 0};
+                    Line_Items.push(dict);
+                }
+            });
+            Cookies.set("Line_Items", Line_Items);
+            var newURL = "/pay/recurring/AUD/" + amountPF + "/" + schedulePaymentID
+            console.log(Line_Items);
+            window.location.href=newURL;
+       }
+   });
+
+   $('.splitpayment').click(function(){
+       var schedulePaymentID = $(this).attr('data-spid');
+       var purchaseID = $(this).attr('data-purchaseid');
+       var reqTOTAL = $(this).attr('data-total');
+       var denom = $(this).attr('data-denom');
+       var displayElementMade = "." + String(purchaseID) + "_Made_" + String(schedulePaymentID);
+       var displayElementRem = "." + String(purchaseID) + "_Rem_" + String(schedulePaymentID);
+
+       var element = "." + String(purchaseID) + "_Input_" + String(schedulePaymentID);
+       $(element).each(function(){
+          $(this).val(reqTOTAL/denom);
+        });
+
+        $(displayElementMade).text(reqTOTAL);
+        $(displayElementRem).text("All Assigned");
+        $('.rempay').css('display', 'none');
+        $('.rem-color').css('color', '#008D14');
+   });
+
+   $(".runTotal").keyup(function() {
+       $('.rempay').css('display', 'inline-block');
+       $('.rem-color').css('color', '#F1474A');
+       var currentTB = $(this)
+       var schedulePaymentID = $(this).attr('data-spid');
+       var purchaseID = $(this).attr('data-purchaseid');
+       var reqTOTAL = $(this).attr('data-total');
+       var element = "." + String(purchaseID) + "_Input_" + String(schedulePaymentID);
+       var displayElementMade = "." + String(purchaseID) + "_Made_" + String(schedulePaymentID);
+       var displayElementRem = "." + String(purchaseID) + "_Rem_" + String(schedulePaymentID);
+
+       var amountPF = 0;
+       $(element).each(function(){
+          if($(this).val().length > 0){
+              amountPF += parseInt($(this).val(),10);
+          } else {
+              amountPF += 0;
+          }
+        });
+
+        var RemPay = parseInt(reqTOTAL) - amountPF;
+
+        if(RemPay < 0){
+            currentTB.val(0);
+            $(displayElementMade).text(0);
+            $(displayElementRem).text(reqTOTAL);
+        } else {
+            if(RemPay == 0){
+                $(displayElementMade).text(amountPF);
+                $(displayElementRem).text("All Assigned");
+                $('.rempay').css('display', 'none');
+                $('.rem-color').css('color', '#008D14');
+            } else {
+                $(displayElementMade).text(amountPF);
+                $(displayElementRem).text(RemPay);
+            }
+        }
+   });
+
+   $(".numbers_only").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl/cmd+A
+            (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+             // Allow: Ctrl/cmd+C
+            (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+             // Allow: Ctrl/cmd+X
+            (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+             // Allow: home, end, left, right
+            (e.keyCode >= 35 && e.keyCode <= 39)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+   </script>
+</div>
+<footer class="footer">
+    <div class="uk-clearfix">
+      <div class="uk-float-right">
+          <ul class="uk-breadcrumb" style="margin-bottom: 0px; position: relative; left: -50px;">
+            <li><a href="https://skillion.com.au/">Website</a></li>
+            <li><a href="/tos">Terms of Service</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="uk-float-left">
+          Skillion Inc.
+      </div>
+  </div>
+</footer>
+</body>
+</html>
