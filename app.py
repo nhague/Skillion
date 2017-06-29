@@ -92,11 +92,22 @@ def facebook_remove():
 def getFacebookToken():
     return session.get('facebook_token')
 #-------------------------------------------------------------------------------
+#                            PUBLIC ROUTES
+#-------------------------------------------------------------------------------
+@app.route('/products', methods = ['GET'])
+def galleryPage():
+    GET_URL = GLOBAL_BASE_URL + '/REST-Customer.awp?Procedure=Product_List&Token=gofuckyourself'
+    request = requests.post(GET_URL)
+    products = json.loads(request.content)["products"]
+    print products
+    return render_template("sellerPublic.html", products = products)
+
+#-------------------------------------------------------------------------------
 #                            CLIENT ROUTES
 #-------------------------------------------------------------------------------
 @app.route('/', methods=['GET', 'POST'])
 def loginPage():
-    """ This route handles login. Once the username and password is posted here
+    """ This route handles login. Once the email and password is posted here
     it is appended to the API call REST-Customer.awp and the response is checked
     for status. The user profile information is added to the session object on
     server-side. Needed fix for the dob_zipmoney field being nested on a higher
@@ -114,10 +125,10 @@ def loginPage():
             success = None
         return render_template("login.html", error = error, success = success)
     elif request.method == "POST":
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         baseUrl = GLOBAL_BASE_URL + "/REST-Customer.awp?Procedure=Customer_LogIn&User="
-        loginUrl = baseUrl + username + "&Pwd=" + password
+        loginUrl = baseUrl + email + "&Pwd=" + password
         requestWWW = requests.post(loginUrl)
         response = json.loads(requestWWW.content)
         if str(response['Status']['Successful']) == "True":
@@ -245,19 +256,10 @@ def editProfile():
                 headers = {'content-type': 'application/json'}
                 headers['token'] = user['token']
                 headers['Procedure'] = 'Customer_Profile_Edit'
-                if len(request.form['username']) == 0:
-                    payload['customer'] = {'name_first' : request.form['firstname'],
-                        'name_last' : request.form['lastname'],
-                        'business_name': request.form['business_name'],
-                        'username': user['username'],
-                        'timezone': request.form['timezone']}
-                else:
-                    payload['customer'] = {'name_first' : request.form['firstname'],
-                        'name_last' : request.form['lastname'],
-                        'business_name': request.form['business_name'],
-                        'username': request.form['username'],
-                        'timezone': request.form['timezone']}
-                print payload
+                payload['customer'] = {'name_first' : request.form['firstname'],
+                    'name_last' : request.form['lastname'],
+                    'business_name': request.form['business_name'],
+                    'timezone': request.form['timezone']}
                 r = requests.post(POST_URL, data=json.dumps(payload),
                     headers=headers)
                 return redirect(url_for('editProfile',
@@ -293,6 +295,7 @@ def editProfile():
                 headers['token'] = user['token']
                 headers['Procedure'] = 'Customer_Profile_Edit'
                 payload['customer'] = {"email": request.form['email_address_c'],
+                    "username": request.form['email_address_c'],
                     "mobile_phone_country_cd": request.form['countrycode'],
                     "mobile_phone_number": request.form['mobile_phone_number_c']}
                 r = requests.post(POST_URL, data=json.dumps(payload),
@@ -732,6 +735,7 @@ def guestMode(a_token, nextmode):
             GET_URL = GLOBAL_BASE_URL + '/REST-Customer.awp?Procedure=Product_Details&Token=' + token
             request = requests.post(GET_URL)
             product = json.loads(request.content)["product"]
+            print product
             return render_template("outright/buy.html", product = product[0],
                 token = token, guestmode = True)
         elif nextmode == "layby":
@@ -759,7 +763,6 @@ def guestSignUp():
     elif request.method == "POST":
         first = request.form['firstname']
         last = request.form['lastname']
-        username = request.form['username']
         email = request.form['email']
         timezone = request.form['timezone']
         countrycode = request.form['countrycode']
@@ -770,7 +773,7 @@ def guestSignUp():
         headers = {'content-type': 'application/json'}
         payload = {}
         payload["customer"] = {"name_first": first, "name_last": last,
-           "username": username, "email": email,
+           "username": email, "email": email,
             "mobile_phone_country_cd": countrycode, "timezone": timezone,
             "mobile_phone_number": number, "dob": dob}
         r = requests.post(NEW_CUSTOMER_URL, data=json.dumps(payload), headers=headers)
