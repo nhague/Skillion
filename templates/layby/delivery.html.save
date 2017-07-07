@@ -360,26 +360,9 @@ $(".num-only").on("keydown", function (e) {
 
 </script>
 <script>
-(function() {
-	var validated,
-	payForOrder = document.getElementById('payfororder');
-	payForOrder.onmouseover = function validated() {
-		var forms = document.getElementsByClassName('uk-form-horizontal');
-		for (let i = 0; i < forms.length; i++) {
-			let input = forms[i];
-			for (let v = 0; v < input.length; v++) {
-				let value = input[v];
-				if (value.name !== 'address2' && !value.value) {
-					var validated = false;
-					break;
-				}
-			}
-		}
-	if (validated == false) {
-		alert('Please fill in all the addresses.');
-		}
-	}
-})();
+
+
+
 </script>
 </div>
 <footer class="footer">

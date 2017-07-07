@@ -49,6 +49,18 @@
           Skillion Inc.
       </div>
   </div>
+  <script>
+	(function() {
+    var newPassword = document.getElementById('form-stacked-text'),
+        reset = document.getElementsByClassName('login login-submit')[0];
+    reset.style.transition = '.5s ease';
+    reset.style.opacity = 0;
+    newPassword.oninput = function() {
+        if (newPassword.value.length < 8) {reset.style.opacity = 0;}
+        else {reset.style.opacity = 1;}
+    }
+})();
+</script>
 </footer>
 </body>
 </html>

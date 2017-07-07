@@ -10,23 +10,6 @@
 		  <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
 		<title>Initiate Layby Sale</title>
 	</head>
-	<script>
-		(function() {
-    console.clear();
-    var logged = Cookies.getJSON().somebody_is_logged.toLowerCase(),
-        base = 'https://shop.skillion.com.au/',
-        extension = /\/\w+\/[\w\W+]+$/g,
-        regex = /^[\w+\W+]+\//g,
-        nextRegex = /\/\w+$/g,
-        data = extension.exec(location.href)[0].slice(7),
-        code = regex.exec(data)[0].slice(0,-1),
-        next = nextRegex.exec(data)[0].slice(1);
-    if (logged == 'true' && document.referrer == 'https://shop.skillion.com.au/products') {
-        var newLocation = `${base}${next}/buy/${code}`
-        window.location.replace(newLocation);
-    }
-})();
-	</script>
 	<body>
 	<div class="content" uk-height-viewport="offset-bottom: 5">
 	<nav class="uk-navbar">
@@ -115,12 +98,6 @@
 	<script type="text/javascript" src="/static/js/jquery.min.js"></script>
 	<script type="text/javascript" src="/static/js/rangeslider.js"></script>
 	<script type="text/javascript">
-	$(document).ready(function() {
-		for (var key in Cookies.get()) {
-			var value = Cookies.get()[key];
-			Cookies.remove(key);
-		}
-	});
 	var updateSchedule = function(amount, deposit, number){
 		data = {
 			"amount_total": parseInt(amount),
@@ -353,7 +330,12 @@
 		price.innerHTML = localStorage.price
 	}
 	try { 
-		updateSchedule(parseInt(localStorage.price),parseInt(localStorage.payNow),parseInt(localStorage.payments));
+		if (localStorage.numMonths > 0) {
+			updateSchedule(parseInt(localStorage.price)*parseInt(localStorage.bikes),parseInt(localStorage.payNow),parseInt(localStorage.numMonths));
+		}
+		else {
+			updateSchedule(parseInt(localStorage.price)*parseInt(localStorage.bikes),parseInt(localStorage.payNow),parseInt(localStorage.numWeeks))
+		}
 	}
 	catch(error) {
 		console.log(error)
@@ -373,17 +355,24 @@
 		localStorage.price = price.innerHTML;
 		if (localStorage.type == 1) {
 			delete localStorage.numMonths;
-			localStorage.payments = weeks.selectedIndex;
 			localStorage.numWeeks = weeks.selectedIndex;}
 		else {
 			delete localStorage.numWeeks;
-			localStorage.payments = months.selectedIndex;
 			localStorage.numMonths = months.selectedIndex;}
 		console.clear();
 		console.log(localStorage);
-		updateSchedule(parseInt(localStorage.price),parseInt(localStorage.payNow),parseInt(localStorage.payments));
+	}
+	slider.onmouseup = function() {
+		try {
+			if (months.selectedIndex  != 0) {console.log(price.innerHTML, bikes.innerHTML);updateSchedule(parseInt(price.innerHTML)*parseInt(bikes.innerHTML),parseInt(payNow.innerHTML),parseInt(months.selectedIndex))}
+			else {updateSchedule(parseInt(price.innerHTML)*parseInt(bikes.innerHTML),parseInt(payNow.innerHTML),parseInt(weeks.selectedIndex))}
+		}
+		catch(err) {
+			console.log(err);
+		}
 	}
 })();
+
 	</script>
 	</div>
 	<footer class="footer">

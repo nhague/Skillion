@@ -13,6 +13,22 @@
 		<title>Initiate Outright Sale</title>
 	</head>
 	<body>
+	<script>
+		(function() {
+    var logged = Cookies.getJSON().somebody_is_logged.toLowerCase(),
+        base = 'https://shop.skillion.com.au/',
+        extension = /\/\w+\/[\w\W+]+$/g,
+        regex = /^[\w+\W+]+\//g,
+        nextRegex = /\/\w+$/g,
+        data = extension.exec(location.href)[0].slice(7),
+        code = regex.exec(data)[0].slice(0,-1),
+        next = nextRegex.exec(data)[0].slice(1);
+    if (logged == 'true' && document.referrer == 'https://shop.skillion.com.au/products') {
+        var newLocation = `${base}${next}/buy/${code}`;
+        window.location.replace(newLocation);
+    }
+})();
+	</script>
 	<div class="content" uk-height-viewport="offset-bottom: 6">
 	<nav class="uk-navbar" style="background: #EEEEEE;">
 		<div class="uk-navbar-flip">
@@ -99,7 +115,43 @@
   	});
 
 	</script>
-</div>
+	<script>
+		(function() {
+    var currentLocation = location.href.slice(-6),
+        nextStep = document.getElementById('submit'),
+        settings = document.getElementById('js-rangeslider-0').children;
+        handle = settings[0],
+        fill = settings[1],
+        bikes = document.getElementsByClassName('amount-text')[0].children[0],
+        slider = document.getElementsByClassName('rangeslider__handle')[0],
+        input = document.getElementsByTagName('input')[0],
+        price = document.getElementById('amount');
+    if (localStorage.bikes != undefined) {
+        bikes.innerHTML = localStorage.bikes;
+	input.value = parseInt(localStorage.bikes);
+    }
+    if (localStorage.width != undefined) {
+        handle.style.width = localStorage.width;
+    }
+    if (localStorage.left != undefined) {
+        fill.style.left = localStorage.left;
+    }
+    if (localStorage.slider != undefined) {
+        slider.style.left = localStorage.slider;
+    }
+    if (localStorage.price != undefined) {
+        price.innerHTML = localStorage.price;
+    }
+    console.log(bikes.innerHTML, localStorage.bikes)
+    nextStep.onmouseover = function() {
+        localStorage.bikes = bikes.innerHTML;
+        localStorage.fill = fill.style.left;
+        localStorage.width = handle.style.width;
+        localStorage.slider = slider.style.left;
+        localStorage.price = price.innerHTML
+}})();
+	</script>
+	</div>
 	<footer class="footer">
 	    <div class="uk-clearfix">
 	      <div class="uk-float-right">

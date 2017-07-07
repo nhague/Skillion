@@ -18,7 +18,7 @@
         <div class="left-login">
             <div class="top-logo">
                 <div style="margin-top: 20px;"></div>
-                <span>Skillion</span>
+                <span><a href='https://www.skillion.com.au' style='color:black';>Skillion</a></span>
             </div>
             <h4 class="login-title">We are Skillion</h4>
             <p class="login-largep">
@@ -45,7 +45,7 @@
                 <h3>Thank you!</h3>
                 <p>{{success}}</p>
             </div>
-            {% endif %}
+            {% else %}
             <div class="login-card">
               <h1>Login</h1>
               <div style="text-align: center; position: relative; top: -12px;">
@@ -71,7 +71,7 @@
                     <a href="/reset/forgot">Forgot my password</a>
                 </div>
           </div>
-
+	{% endif %}
       </div>
         </div>
     </div>

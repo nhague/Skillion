@@ -10,6 +10,16 @@
   <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit.js?nc=2473"></script>
   <script type="text/javascript" src="https://getuikit.com/assets/uikit/dist/js/uikit-icons.js?nc=2473"></script>
   <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+  <script>
+	(function() {
+    if (window.location.href == 'https://shop.skillion.com.au/payments?notification=purchased') {
+        for (element in localStorage) {
+            localStorage.removeItem(element)
+        }
+    }
+    return true
+})();
+  </script>
 </head>
 <body>
     <div class="content" uk-height-viewport="offset-bottom: 6">

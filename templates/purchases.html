@@ -104,9 +104,9 @@
      <div class="modal-content" style="max-width: 450px;">
         <span class="closepp" data-number="{{future_payment.id}}" style="position: relative; top: -5px;">&times;</span>
         <h2 class="uk-card-title" style="margin: 0px; font-weight: 600;">How would you like to pay for this?</h2>
-        <h4 style="font-size: 14px; margin: 5px 0px; margin-bottom: 5px;">Total Amount Due —  <span style="float: right; font-weight: 600; position: relative; right: -15px;">{{purchase.ccy}} <span>{{future_payment.amount}}</span></span></h4>
-        <h4 style="font-size: 14px; margin: 0px; margin-bottom: 5px;">Total Amount Assigned — <span style="float: right; font-weight: 600; color: #008D14;">{{purchase.ccy}} <span class="{{purchase.id}}_Made_{{future_payment.id}}">0</span></span></h4>
-        <h4 style="font-size: 14px; margin: 0px; margin-bottom: 5px;">Total Amount Unassigned —  <span class="rem-color" style="float: right; font-weight: 600; color: #F1474A;"><span class="rempay">{{purchase.ccy}}</span> <span class="{{purchase.id}}_Rem_{{future_payment.id}}">{{future_payment.amount}}</span></span></h4>
+        <h4 style="font-size: 14px; margin: 5px 0px; margin-bottom: 5px;">Total Amount Due <span style="float: right; font-weight: 600; position: relative; right: -15px;">{{purchase.ccy}} <span>{{future_payment.amount}}.00</span></span></h4>
+        <h4 style="font-size: 14px; margin: 0px; margin-bottom: 5px;">Total Amount Assigned <span style="float: right; font-weight: 600; color: #008D14;">{{purchase.ccy}} <span class="{{purchase.id}}_Made_{{future_payment.id}}">0.00</span></span></h4>
+        <h4 style="font-size: 14px; margin: 0px; margin-bottom: 5px;">Total Amount Unassigned <span class="rem-color" style="float: right; font-weight: 600; color: #F1474A;"><span class="rempay">{{purchase.ccy}}</span> <span class="{{purchase.id}}_Rem_{{future_payment.id}}">{{future_payment.amount}}</span></span></h4>
         <table class="uk-table uk-table-small uk-table-divider">
             <thead>
                 <tr>
@@ -120,17 +120,16 @@
                 <tr>
                     <td>{{loop.index}}</td>
                     <td>{{item.product_name}}</td>
-                    <td><input class="uk-input numbers_only runTotal {{purchase.id}}_Input_{{future_payment.id}}" data-lineid="{{item.id}}" data-total="{{future_payment.amount}}" data-purchaseid="{{purchase.id}}" data-spid="{{future_payment.id}}" type="text" placeholder="Amount to pay..."></td>
+                    <td><input class="uk-input runTotal {{purchase.id}}_Input_{{future_payment.id}}" data-lineid="{{item.id}}" data-total="{{future_payment.amount}}" data-purchaseid="{{purchase.id}}" data-spid="{{future_payment.id}}" type="text" placeholder="Amount to pay..."></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <a class="uk-button uk-button-primary uk-button-large uk-width-1-1 payPP" data-spid="{{future_payment.id}}" data-total="{{future_payment.amount}}" data-purchaseid="{{purchase.id}}">Pay Now</a>
+        <a id='payNow' class="uk-button uk-button-primary uk-button-large uk-width-1-1 payPP" data-spid="{{future_payment.id}}" data-total="{{future_payment.amount}}" data-purchaseid="{{purchase.id}}">Pay Now</a>
      </div>
     </div>
     {% endif %}
     {% endfor %}
-
    <div id="purchaseInfobox{{loop.index}}" class="modal" data-number="{{loop.index}}">
      <!-- Modal content -->
      <div class="modal-content" style="max-width: 950px;">
@@ -270,6 +269,7 @@
    </div>
    {% endfor %}
    <script>
+   var purchases = {{purchases|tojson}};
    // When the user clicks on the button, open the modal
    $('.purchaseInfo').on('click', function(){
        var num = $(this).attr('data-number');
@@ -308,18 +308,17 @@
        var purchaseID = $(this).attr('data-purchaseid');
        var reqTOTAL = $(this).attr('data-total');
        var element = "." + String(purchaseID) + "_Input_" + String(schedulePaymentID);
-
        var amountPF = 0;
        $(element).each(function(){
           if($(this).val().length > 0){
-              amountPF += parseInt($(this).val(),10);
+              amountPF += parseFloat($(this).val(),10);
           } else {
               $(this).val(0);
-              amountPF += parseInt($(this).val());
+              amountPF += parseFloat($(this).val());
           }
         });
        if(amountPF != reqTOTAL){
-           message = "You need to pay atleast AUD " + String(reqTOTAL) + " in total."
+           message = `Amount payable now is $${reqTOTAL}. You have $${reqTOTAL-amountPF} left to assign.`
            UIkit.modal.alert(message).then(function() {
                console.log('Alert closed.')
            });
@@ -332,7 +331,10 @@
                 }
             });
             Cookies.set("Line_Items", Line_Items);
-            var newURL = "/pay/recurring/AUD/" + amountPF + "/" + schedulePaymentID
+	    document.cookie = 'currency='+'AUD';
+	    document.cookie = 'amount='+amountPF;
+	    document.cookie = 'id='+schedulePaymentID;
+            var newURL = "/pay/recurring";
             console.log(Line_Items);
             window.location.href=newURL;
        }
@@ -371,27 +373,27 @@
        var amountPF = 0;
        $(element).each(function(){
           if($(this).val().length > 0){
-              amountPF += parseInt($(this).val(),10);
+              amountPF += parseFloat($(this).val(),10)
           } else {
               amountPF += 0;
           }
         });
 
-        var RemPay = parseInt(reqTOTAL) - amountPF;
+        var RemPay = parseFloat(reqTOTAL) - amountPF;
 
         if(RemPay < 0){
-            currentTB.val(0);
+            currentTB.val(parseFloat(reqTOTAL) - (currentTB.val()-(parseFloat(reqTOTAL)-(amountPF-currentTB.val()))));
             $(displayElementMade).text(0);
             $(displayElementRem).text(reqTOTAL);
         } else {
             if(RemPay == 0){
-                $(displayElementMade).text(amountPF);
+                $(displayElementMade).text((amountPF).toFixed(2));
                 $(displayElementRem).text("All Assigned");
                 $('.rempay').css('display', 'none');
                 $('.rem-color').css('color', '#008D14');
             } else {
-                $(displayElementMade).text(amountPF);
-                $(displayElementRem).text(RemPay);
+                $(displayElementMade).text((amountPF).toFixed(2));
+                $(displayElementRem).text((RemPay).toFixed(2));
             }
         }
    });
@@ -416,6 +418,40 @@
         }
     });
    </script>
+   <script>
+	(function() {
+    var table = $('tr'),
+        payments = new Array,
+        data = new Object;
+    for (let i = 0; i < table.length; i ++) {
+        let purchase = table[i];
+        if (purchase.id === 'scheduledpayment')
+            payments.push(purchase);
+    }
+    for (let x = 0; x < payments.length; x ++) {
+        let due = payments[x],
+            moreInfo = due.children,
+            transaction = moreInfo[2].innerHTML;
+        if (data[transaction] == undefined) {
+            data[transaction] = new Array;
+            data[transaction].push(due);
+        }
+        else {
+            data[transaction].push(due);
+        }
+    }
+    for (element in data) {
+        let set = data[element];
+        for (let y = 0; y < set.length; y++) {
+            let payment = set[y],
+                paymentData = payment.children[5].children[0];
+            if (y !== 0) {
+                paymentData.style.display = 'none';
+            }
+        }
+    }
+})();
+</script>
 </div>
 <footer class="footer">
     <div class="uk-clearfix">

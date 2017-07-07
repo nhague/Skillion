@@ -125,8 +125,8 @@ def loginPage():
             success = None
         return render_template("login.html", error = error, success = success)
     elif request.method == "POST":
-        email = request.form['email']
-        password = request.form['password']
+        email = request.form.get('email')
+        password = request.form.get('password')
         baseUrl = GLOBAL_BASE_URL + "/REST-Customer.awp?Procedure=Customer_LogIn&User="
         loginUrl = baseUrl + email + "&Pwd=" + password
         requestWWW = requests.post(loginUrl)
@@ -135,7 +135,7 @@ def loginPage():
             session['user'] = response['Customer']
             session['user']['dob_zipmoney'] = response['dob_zipmoney']
             firstLogin = response['first_login']
-            if request.form['wasGuest'] == "None":
+            if request.form.get('wasGuest') == "None":
                 response = make_response(redirect(url_for('profilePage', ref = firstLogin)))
                 response.set_cookie(b'somebody_is_logged', "True", domain=".skillion.com.au")
                 return response
@@ -338,7 +338,7 @@ def buyOutright(token):
     if request.method == "GET":
         import json
         GET_URL = GLOBAL_BASE_URL + '/REST-Customer.awp?Procedure=Product_Details&Token=' + token
-        request = requests.post(GET_URL)
+	request = requests.post(GET_URL)
         product = json.loads(request.content)["product"]
         return render_template("outright/buy.html", product = product[0],
             token = token, guestmode = False)
@@ -357,8 +357,13 @@ def deliveryOutright(token):
     if request.method == "GET":
         transaction = session['transaction']
         user = session['user']
+	import json, requests, re
+	ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+	url = 'http://ipinfo.io/{}/json'.format(ip)
+	ip_info = json.loads(requests.get(url).content.decode('utf-8','ignore')).get('loc')
+	data = json.loads(requests.get('https://maps.googleapis.com/maps/api/geocode/json?latlng={}'.format(ip_info)).content.decode('utf-8','ignore'))
         return render_template("outright/delivery.html", transaction = transaction,
-            token = token, user = user)
+            token = token, user = user, data = data)
     elif request.method == "POST":
         return "200 OK"
 #-------------------------------------------------------------------------------
@@ -646,24 +651,24 @@ def payAll(currency, amount, id):
         else:
             return redirect(url_for('payments', error="Something went wrong. Please try again later!"))
 #-------------------------------------------------------------------------------
-@app.route('/pay/recurring/<currency>/<amount>/<id>', methods=['GET', 'POST'])
-def payRec(currency, amount, id):
-    user = session['user']
+@app.route('/pay/recurring', methods=['GET', 'POST'])
+def payRec():
+    user = session.get('user')
     if request.method == "GET":
         return render_template("stripepp.html",
             keys = "pk_test_JvYffOKVrAyerfnvecmzjsjr",
-            currency = currency, amount = amount, rec = True, id = id,
+            currency = request.cookies.get('currency'), amount = float(request.cookies.get('amount')), rec = True, id = int(request.cookies.get('id')),
             user = session['user'])
     if request.method == "POST":
         import stripe
         token = request.form['stripeToken']
-        amount = int(request.form['amount']) * 100
+        amount = float(request.form['amount']) * 100
         stripe.api_key = "sk_test_f5JjDn0WKFAUAtAlolyQyHBs"
         charge = stripe.Charge.create(
-            amount=int(amount),
-            currency=str(currency),
+            amount=amount,
+            currency=currency,
             description="Skillion Charge",
-            source=token,)
+            source=token)
         headers = {'content-type': 'application/json'}
         POST_URL = LAYBY_PAYMENTS_URL + user['token']
         payload = json.loads(request.form['dump'])
@@ -697,7 +702,7 @@ def payments():
             user = session['user']
             GET_URL = GLOBAL_BASE_URL + '/REST-Customer.awp?Procedure=Customer_PaymentList&Token=' + user['token']
             request = requests.post(GET_URL)
-            response = json.loads(request.content)
+            response = json.loads(request.content.decode('utf-8','ignore'))
             if str(response['Status']['Successful']) == "True":
                 return render_template("payments.html", payments = response['payment'],
                 success = success, error = error, user = user)
@@ -728,14 +733,13 @@ def purchases():
 @app.route('/guest/<a_token>/<nextmode>', methods = ['GET', 'POST'])
 def guestMode(a_token, nextmode):
     import json
-    token = a_token.upper()
+    token = a_token
     from flask import request
     if request.method == "GET":
         if nextmode == "outright":
             GET_URL = GLOBAL_BASE_URL + '/REST-Customer.awp?Procedure=Product_Details&Token=' + token
-            request = requests.post(GET_URL)
-            product = json.loads(request.content)["product"]
-            print product
+	    r = requests.post(GET_URL) #can't name something after an imported module or class - bad practice
+            product = json.loads(r.content.decode('utf-8','ignore')).get('product')
             return render_template("outright/buy.html", product = product[0],
                 token = token, guestmode = True)
         elif nextmode == "layby":

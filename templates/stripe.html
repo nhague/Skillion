@@ -27,7 +27,7 @@
     </nav>
     <div class="card-holder">
         <div class="uk-card uk-card-default uk-card-body">
-            <h2 class="title">Pay <span class="currency" style="color: #2ecc71">{{currency}}</span> <span style="color: #2ecc71" class="amount">{{amount}}</span> via Stripe</h2>
+            <h2 class="title">Pay <span class="currency" style="color: #2ecc71">{{currency}}</span> <span style="color: #2ecc71" class="amount" id='amount'>{{amount}}</span> via Stripe</h2>
             <form action="/pay/all/{{currency}}/{{amount}}/{{id}}" method="post" id="payment-form">
               <div class="form-row">
                 <label for="card-element" style="margin-bottom: 15px;">
@@ -123,6 +123,12 @@
           form.submit();
         }
     </script>
+    <script>
+	window.onDOMContentLoaded = function() {
+    var amount = document.getElementsByClassName('amount')[0];
+    amount.innerHTML = (parseInt(amount.innerHTML)).toFixed(2)
+}
+</script>
 </div>
 <footer class="footer">
     <div class="uk-clearfix">

@@ -201,30 +201,30 @@
 	                        <label class="uk-form-label" for="form-stacked-text">Country Code</label>
 	                        <div class="uk-form-controls">
 	                        <select name="countrycode" class="uk-select" id="form-stacked-select">
-	                            <option data-countryCode="AU" value="61" Selected>Australia (+61)</option>
-	                            <option data-countryCode="GB" value="44">UK (+44)</option>
-	                            <option data-countryCode="US" value="1">USA (+1)</option>
+	                            <option data-countryCode="AU" value="61" Selected>Australia ( +61 )</option>
+	                            <option data-countryCode="GB" value="44">UK ( +44 )</option>
+	                            <option data-countryCode="US" value="1">USA ( +1 )</option>
 	                            <optgroup label="Other countries">
-	                                <option data-countryCode="DZ" value="213">Algeria (+213)</option>
-	                                <option data-countryCode="AD" value="376">Andorra (+376)</option>
-	                                <option data-countryCode="AO" value="244">Angola (+244)</option>
-	                                <option data-countryCode="AI" value="1264">Anguilla (+1264)</option>
-	                                <option data-countryCode="AG" value="1268">Antigua &amp; Barbuda (+1268)</option>
-	                                <option data-countryCode="AR" value="54">Argentina (+54)</option>
-	                                <option data-countryCode="AM" value="374">Armenia (+374)</option>
-	                                <option data-countryCode="AW" value="297">Aruba (+297)</option>
-	                                <!--<option data-countryCode="AU" value="61">Australia (+61)</option>-->
-	                                <option data-countryCode="AT" value="43">Austria (+43)</option>
-	                                <option data-countryCode="AZ" value="994">Azerbaijan (+994)</option>
-	                                <option data-countryCode="BS" value="1242">Bahamas (+1242)</option>
-	                                <option data-countryCode="BH" value="973">Bahrain (+973)</option>
-	                                <option data-countryCode="BD" value="880">Bangladesh (+880)</option>
-	                                <option data-countryCode="BB" value="1246">Barbados (+1246)</option>
-	                                <option data-countryCode="BY" value="375">Belarus (+375)</option>
-	                                <option data-countryCode="BE" value="32">Belgium (+32)</option>
-	                                <option data-countryCode="BZ" value="501">Belize (+501)</option>
-	                                <option data-countryCode="BJ" value="229">Benin (+229)</option>
-	                                <option data-countryCode="BM" value="1441">Bermuda (+1441)</option>
+	                                <option data-countryCode="DZ" value="213">Algeria ( +213 )</option>
+	                                <option data-countryCode="AD" value="376">Andorra ( +376 )</option>
+	                                <option data-countryCode="AO" value="244">Angola ( +244 )</option>
+	                                <option data-countryCode="AI" value="1264">Anguilla ( +1264 )</option>
+	                                <option data-countryCode="AG" value="1268">Antigua &amp; Barbuda ( +1268 )</option>
+	                                <option data-countryCode="AR" value="54">Argentina ( +54 )</option>
+	                                <option data-countryCode="AM" value="374">Armenia ( +374 )</option>
+	                                <option data-countryCode="AW" value="297">Aruba ( +297 )</option>
+	                                <!--<option data-countryCode="AU" value="61">Australia ( +61 )</option>-->
+	                                <option data-countryCode="AT" value="43">Austria ( +43 )</option>
+	                                <option data-countryCode="AZ" value="994">Azerbaijan ( +994 )</option>
+	                                <option data-countryCode="BS" value="1242">Bahamas ( +1242 )</option>
+	                                <option data-countryCode="BH" value="973">Bahrain ( +973 )</option>
+	                                <option data-countryCode="BD" value="880">Bangladesh ( +880 )</option>
+	                                <option data-countryCode="BB" value="1246">Barbados (+1246 )</option>
+	                                <option data-countryCode="BY" value="375">Belarus ( +375 )</option>
+	                                <option data-countryCode="BE" value="32">Belgium ( +32 )</option>
+	                                <option data-countryCode="BZ" value="501">Belize ( +501 )</option>
+	                                <option data-countryCode="BJ" value="229">Benin ( +229 )</option>
+	                                <option data-countryCode="BM" value="1441">Bermuda ( +1441 )</option>
 	                                <option data-countryCode="BT" value="975">Bhutan (+975)</option>
 	                                <option data-countryCode="BO" value="591">Bolivia (+591)</option>
 	                                <option data-countryCode="BA" value="387">Bosnia Herzegovina (+387)</option>
@@ -880,9 +880,9 @@
 					   <h1 class="uk-title" style="font-weight: 100; padding-bottom: 30px;">Log In</h1>
 					   <form class="uk-form-stacked" method="post" action="/">
 						   <div class="uk-margin">
-							   <label class="uk-form-label" for="form-stacked-text">Username</label>
+							   <label class="uk-form-label" for="form-stacked-text">Email</label>
 							   <div class="uk-form-controls">
-								   <input class="uk-input" id="form-stacked-text" type="text" name="username" placeholder="Your Username...">
+								   <input class="uk-input" id="form-stacked-text" type="email" name="email" placeholder="Your Email...">
 							   </div>
 						   </div>
 						   <div class="uk-margin">
@@ -1011,6 +1011,59 @@
 	$('.close').on('click', function(){
 		var modal = document.getElementById("loginModal");
 		modal.style.display = "none";
-	});
+	}); 	
+	</script>
+	<script>
+	(function() {
+    console.clear();
+    var form = $('input'),
+    special = /\@\%\$\#\(\)\!\*/g,
+    validEmail = /[\w\.]{3,24}@{1}\w+\.{1}\w{3}$/g,
+    invalidPhone = /([^0-9])/g,
+    validPhone = /\d{10}/g,
+    validNumber = false,
+    validAddress = false,
+    submit = $('button')[0];
+    submit.style.transition = '.6s ease';
+    submit.style.opacity = 0;
+    for (let i = 0; i < form.length; i++) {
+        var thing = form[i];
+        let value = '#' + thing.name;
+        if (thing.name == 'firstname') {
+            var firstname = $(value)[0];
+            firstname.oninput = function() {
+                firstname.value = firstname.value.replace(special,'');
+            }
+        }
+        else if (thing.name == 'lastname') {
+            var lastname = $(value)[0];
+            lastname.oninput = function() {
+                lastname.value = lastname.value.replace(special,'');
+            }
+        }
+        else if (thing.name == 'email') {
+            var email = $(value)[0];
+            email.oninput = function() {
+	       email.value = email.value.replace(special,'');
+               validAddress = validEmail.test(email.value);
+	       console.log('valid email:',validAddress,'| valid number:',validNumber);
+	       if (validAddress && validNumber) {
+	           submit.style.opacity = 1;}
+	       else {submit.style.opacity = 0;}
+            }
+        }
+        else if (thing.name == 'number') {
+            var phone = $('#form-stacked-text')[0];
+            phone.oninput = function() {
+                phone.value = phone.value.replace(invalidPhone,'');
+		validNumber = validPhone.test(phone.value);
+		console.log('valid email:',validAddress,'| valid number:',validNumber);
+                if (validAddress && validNumber) {
+		    submit.style.opacity = 1;}
+                else {submit.style.opacity = 0}
+            }
+        }
+    }
+})();
 	</script>
 </html>
