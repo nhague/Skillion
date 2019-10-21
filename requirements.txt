@@ -4,7 +4,7 @@ Jinja2==2.9.5
 MarkupSafe==0.23
 PySimpleSOAP==1.16
 SOAPpy==0.12.22
-Werkzeug==0.11.15
+Werkzeug==0.15.3
 appdirs==1.4.3
 appier==1.10.9
 asn1crypto==0.22.0
