@@ -17,7 +17,7 @@ dicttoxml==1.7.4
 enum34==1.1.6
 google-api==0.1.11
 google-api-python-client==1.6.2
-httplib2==0.10.3
+httplib2==0.18.0
 idna==2.5
 ipaddress==1.0.18
 isodate==0.5.4
