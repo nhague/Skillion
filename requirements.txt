@@ -1,6 +1,6 @@
 Flask==0.12
 Flask-OAuth==0.12
-Jinja2==2.9.5
+Jinja2==2.11.3
 MarkupSafe==0.23
 PySimpleSOAP==1.16
 SOAPpy==0.12.22
