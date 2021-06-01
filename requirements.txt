@@ -44,7 +44,7 @@ soap2py==1.16
 stripe==1.19.1
 twilio==5.7.0
 uritemplate==3.0.0
-urllib3==1.20
+urllib3==1.26.5
 wsgiref==0.1.2
 wstools==0.4.5
 zeep==1.2.0
